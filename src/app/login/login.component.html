@@ -1,0 +1,42 @@
+<div class="w-100 d-flex align-items-center justify-content-center fixed">
+
+  <div class="text-center inner shadow-sm w-25 bg-white rounded m-5 p-3">
+    <p class="text-end text-muted opacity-50 mx-3">
+ ورود به پنل کاربری
+    </p>
+    <hr>
+    <form [formGroup]="loginForm">
+      <div>
+        <label> نام کاربری </label>
+        <input formControlName="username" />
+      </div>
+
+      <div class="">
+        <label> کلمه عبور</label>
+        <input formControlName="password" type="password"/>
+      </div>
+
+      <div class="">
+        <button
+          [disabled]="loginForm.invalid"
+          *ngIf="!loadingProgress"
+          (click)="login()"
+          class="w-fit m-4"
+          type="submit"
+          mat-raised-button
+        >
+          ورود
+        </button>
+        <button
+          *ngIf="loadingProgress"
+          (click)="login()"
+          class="w-fit m-4"
+          type="submit"
+          mat-raised-button
+        >
+          <img src="../../assets/img/loading.gif" class="icon" />
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

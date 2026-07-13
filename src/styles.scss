@@ -1,0 +1,51 @@
+.bg-dark {
+  background-color: rgb(10, 95, 53) !important;
+}
+.formControl,
+label {
+  margin: 1vh;
+}
+* {
+  direction: rtl;
+}
+select {
+  width: 50%;
+  height: 5vh;
+}
+label {
+  width: 15%;
+}
+.bg-green-dark {
+  background-color: #3c344eea !important;
+}
+@font-face {
+  font-family: "edwardian";
+  src: url(assets/font/lalezar.ttf) format("truetype");
+  font-weight: 900;
+}
+* {
+  font-family: edwardian;
+}
+.text-scale:hover {
+  animation: scale-change-animation 0.3s forwards;
+}
+@keyframes scale-change-animation {
+  0% {
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+.loading-full{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top:0;
+  z-index: 1000000 !important;
+  text-align: center;
+  background-color: rgba(14, 7, 78, 0.1);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+}

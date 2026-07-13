@@ -1,0 +1,53 @@
+<div class="text-end inner shadow-sm w-100 bg-white rounded">
+  <p class="text-end text-muted opacity-50 mx-3"></p>
+  <hr />
+  <form [formGroup]="formInput">
+    <div>
+      <label> شماره تماس</label>
+      <input formControlName="tell" />
+    </div>
+
+    <div class="">
+      <label> نوع پشتیبانی</label>
+      <input formControlName="typehc" />
+    </div>
+
+    <div class="">
+      <label> تاریخ و ساعت</label>
+      <input formControlName="datetime" />
+    </div>
+
+    <div class="">
+      <label> نتیجه تماس</label>
+      <select (change)="changeResult($event)" formControlName="result">
+        <option value="satisfy">راضی</option>
+        <option value="unsatisfy">ناراضی</option>
+      </select>
+    </div>
+
+    <div class="" *ngIf="unsatisfying">
+      <label> علت نارضایتی</label>
+      <input formControlName="password" />
+    </div>
+
+    <div class="">
+      <button
+        [disabled]="formInput.invalid"
+        *ngIf="!loadingProgress"
+        class="w-fit m-4"
+        type="submit"
+        mat-raised-button
+      >
+        ورود
+      </button>
+      <button
+        *ngIf="loadingProgress"
+        class="w-fit m-4"
+        type="submit"
+        mat-raised-button
+      >
+        <img src="../../assets/img/loading.gif" class="icon" />
+      </button>
+    </div>
+  </form>
+</div>
