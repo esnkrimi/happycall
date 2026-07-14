@@ -8,6 +8,8 @@ import {
 import { LocalStorageService } from '../localstorage';
 import { Router } from '@angular/router';
 import { PublicValsService } from '../public-vals.service';
+import { ServiceService } from './service.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -19,14 +21,16 @@ export class LoginComponent implements OnInit {
     username: new FormControl('admin', Validators.required),
     password: new FormControl('', Validators.required),
   });
+  user: any;
   loadingProgress = false;
   constructor(
     private localStorage: LocalStorageService,
     private router: Router,
     private publicValsService: PublicValsService,
+    private serviceService: ServiceService,
   ) {}
   ngOnInit(): void {
-    if (this.localStorage.getItem('logined') === 'true') {
+    if (this.localStorage.getItem('isLoggedIn') === 'true') {
       this.router.navigate(['/']);
     }
     this.publicValsService.loadinProgress.subscribe((res) => {
@@ -37,18 +41,22 @@ export class LoginComponent implements OnInit {
     this.publicValsService.loadinProgress.next(true);
     const username: any = this.loginForm.get('username')?.value;
     const password: any = this.loginForm.get('password')?.value;
-    if (username === 'admin' && password === 'admin') {
-      this.localStorage.setItem('loginedUser', 'true');
-      setTimeout(() => {
-        console.log('yes')
-        this.publicValsService.loadinProgress.next(false);
-        this.router.navigate(['']);
-      }, 1000);
-    } else {
-      this.localStorage.setItem('logined', 'false');
-    }
-    setTimeout(() => {
-      this.publicValsService.loadinProgress.next(false);
-    }, 1000);
+    this.serviceService
+      .login(username, password)
+      .pipe(map((res: any) => res[0]))
+      .subscribe((res: any) => {
+        this.user = res;
+        this.localStorage.setItem('isLoggedIn', 'true');
+        this.localStorage.setItem('opname', res.name);
+        this.localStorage.setItem('opfamily', res.family);
+        this.localStorage.setItem('opType', res.type);
+        this.localStorage.setItem('opId', res.id);
+        console.log(this.user);
+        setTimeout(() => {
+          console.log('yes');
+          this.router.navigate(['']);
+          this.publicValsService.loadinProgress.next(false);
+        }, 1000);
+      });
   }
 }

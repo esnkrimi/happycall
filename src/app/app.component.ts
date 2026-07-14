@@ -19,5 +19,13 @@ export class AppComponent implements OnInit {
   activeProgress(handle: boolean) {}
   ngOnInit(): void {}
 
-  logoff() {}
+  logoff() {
+    localStorage.setItem('loginedUser', '');
+    this.localStorage.setItem('logined', 'true');
+    this.localStorage.setItem('opname', '');
+    this.localStorage.setItem('opfamily', '');
+    this.localStorage.setItem('opType', '');
+    this.localStorage.clear();
+    window.location.reload();
+  }
 }

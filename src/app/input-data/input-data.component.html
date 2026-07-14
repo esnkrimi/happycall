@@ -9,12 +9,10 @@
 
     <div class="">
       <label> نوع پشتیبانی</label>
-      <input formControlName="typehc" />
-    </div>
-
-    <div class="">
-      <label> تاریخ و ساعت</label>
-      <input formControlName="datetime" />
+      <select formControlName="typehc">
+        <option value="failure">خرابی</option>
+        <option value="ongoing">دایری</option>
+      </select>
     </div>
 
     <div class="">
@@ -25,20 +23,29 @@
       </select>
     </div>
 
-    <div class="" *ngIf="unsatisfying">
+    <div class="w-100 p-3" *ngIf="unsatisfying">
       <label> علت نارضایتی</label>
-      <input formControlName="password" />
+      <div class="row w-100">
+        <div class="col-md-4" *ngFor="let item of unsatisfyingTypes">
+          <input
+            type="checkbox"
+            [id]="item"
+            (change)="changeUnsatisfying($event, item)"
+          />
+          <label class="w-25"> {{ item }}</label>
+        </div>
+      </div>
     </div>
 
     <div class="">
       <button
-        [disabled]="formInput.invalid"
+        (click)="submit()"
         *ngIf="!loadingProgress"
         class="w-fit m-4"
         type="submit"
         mat-raised-button
       >
-        ورود
+        بروزرسانی
       </button>
       <button
         *ngIf="loadingProgress"
