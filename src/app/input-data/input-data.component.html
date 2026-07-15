@@ -58,3 +58,26 @@
     </div>
   </form>
 </div>
+
+<div class="headers">شماره های ثبت شده توسط من</div>
+<table>
+  <tr class="d-flex w-100 rows">
+    <td>شماره مشترک</td>
+    <td>تاریخ تماس</td>
+    <td>نتیجه</td>
+  </tr>
+
+  <tr class="d-flex w-100 p-2 rows" *ngFor="let item of userFailure">
+    <td>{{ item.tell }}</td>
+    <td>{{ item.datetime }}</td>
+    <td>{{ item.result }}</td>
+    <td *ngIf="item.result === 'ناراضی'">
+      <span
+        class="border p-1 m-1 bg-dark text-light rounded"
+        *ngFor="let i of item.resultunsatisfying"
+      >
+        {{ i }}
+      </span>
+    </td>
+  </tr>
+</table>

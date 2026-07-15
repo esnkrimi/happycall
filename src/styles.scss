@@ -37,15 +37,20 @@ label {
   }
 }
 
-.loading-full{
+.loading-full {
   position: fixed;
   width: 100vw;
   height: 100vh;
   left: 0;
-  top:0;
+  top: 0;
   z-index: 1000000 !important;
   text-align: center;
   background-color: rgba(14, 7, 78, 0.1);
   -webkit-backdrop-filter: blur(15px);
   backdrop-filter: blur(15px);
+}
+.rows > td {
+  border: solid 1px gray;
+  margin-left: 1vh;
+  padding: 1vh;
 }

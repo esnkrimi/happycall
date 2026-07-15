@@ -8,8 +8,6 @@
 </div>
 <div class="bg-light w-100 d-flex">
   <div class="w-25">
-
-
     <div
       (click)="activeProgress(true)"
       [routerLink]="'/inputData'"
@@ -25,6 +23,7 @@
     </div>
   </div>
   <div class="w-75 p-4">
+    <div class="loading" *ngIf="loadinProgress"></div>
     <router-outlet></router-outlet>
   </div>
 </div>
