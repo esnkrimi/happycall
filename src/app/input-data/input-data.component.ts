@@ -17,6 +17,20 @@ export class InputDataComponent implements OnInit {
   loadingProgress = false;
   unsatisfying = false;
   filteredName: any = '';
+  editID = 0;
+  formEdit = new FormGroup({
+    tell: new FormControl('', Validators.required),
+    opname: new FormControl(''),
+    opfamily: new FormControl(''),
+    opType: new FormControl(''),
+    typehc: new FormControl(''),
+    datetime: new FormControl(''),
+    result: new FormControl(''),
+    opId: new FormControl(''),
+    resultunsatisfying: new FormControl(''),
+    repairDateTime: new FormControl(''),
+  });
+  modal = false;
   filterName = new FormGroup({
     name: new FormControl(''),
   });
@@ -42,6 +56,13 @@ export class InputDataComponent implements OnInit {
     private serviceService: ServiceService,
     private publicService: PublicService,
   ) {}
+
+  modalShow(id: any) {
+    this.editID = id;
+    this.modal = true;
+    console.log(id);
+  }
+
   ngOnInit(): void {
     this.fetchMyFailures();
     this.listenTofilterName();
@@ -114,6 +135,24 @@ export class InputDataComponent implements OnInit {
   }
   events(pageNumber: any) {
     this.paginationPageNumber = pageNumber;
+  }
+  update() {
+    this.publicService.loadingProgress.next(true);
+    const shamsiDate = new Intl.DateTimeFormat('fa-IR').format(new Date());
+    this.formEdit.get('opname')?.setValue(this.localStorage.getItem('opname'));
+    this.formEdit
+      .get('opfamily')
+      ?.setValue(this.localStorage.getItem('opfamily'));
+    this.formEdit.get('opType')?.setValue(this.localStorage.getItem('opType'));
+    this.formEdit.get('opId')?.setValue(this.localStorage.getItem('opId'));
+    this.formEdit.get('datetime')?.setValue(shamsiDate);
+    console.log(this.editID);
+    this.serviceService
+      .edit(this.formEdit.value, this.editID)
+      .subscribe((res) => {
+        this.fetchMyFailures();
+        this.modal = false;
+      });
   }
 
   submit() {

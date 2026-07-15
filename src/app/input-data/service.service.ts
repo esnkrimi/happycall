@@ -13,6 +13,15 @@ export class ServiceService {
     );
   }
 
+  edit(formInput: any, id: any) {
+    console.log(
+      `${this.userBase}4&formInput=${JSON.stringify(formInput)}&fid=${id}`,
+    );
+    return this.http.get(
+      `${this.userBase}4&formInput=${JSON.stringify(formInput)}&fid=${id}`,
+    );
+  }
+
   fetchMyFailures(userid: any) {
     console.log(`${this.userBase}3&userid=${userid}`);
     return this.http.get(`${this.userBase}3&userid=${userid}`);

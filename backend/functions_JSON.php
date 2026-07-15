@@ -3,6 +3,27 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
+function edit($con){
+$data=$_GET['formInput'];
+$data = json_decode($data, true); 
+$id=$_GET['fid'];
+$opId = $data['opId'];
+$tell = $data['tell'];
+$typehc = $data['typehc'];
+$datetime = $data['datetime'];
+$result = $data['result'];
+$opId = $data['opId'];
+$resultunsatisfying = $data['resultunsatisfying'];
+$repairDateTime = $data['repairDateTime'];
+$sql = "update failure set 
+  tell='$tell', typehc='$typehc',result='$result' ,resultunsatisfying='$resultunsatisfying' 
+  where
+  id=$id";
+$result=$con->QUERY_RUN($con,$sql);
+  echo('[{"commited":"1"}]');
+}
+
+
 function fetchMyFailures($con){
   $id=$_GET['userid'];
   $sql = "SELECT  * from failure where userid='$id' order by id desc";

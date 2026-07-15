@@ -116,7 +116,7 @@
         </ng-container>
       </td>
       <td class="text-center">
-        <i class="fa fa-edit"></i>
+        <i (click)="modalShow(item?.id)" class="fa fa-edit"></i>
       </td>
       <td class="text-center">
         <i class="fa fa-trash"></i>
@@ -124,3 +124,64 @@
     </ng-container>
   </tr>
 </table>
+
+<div class="modals text-center" *ngIf="modal">
+  <div class="w-50 bg-light inline m-auto">
+    <form [formGroup]="formEdit">
+      <div>
+        <label> شماره تماس</label>
+        <input formControlName="tell" />
+      </div>
+
+      <div class="">
+        <label> نوع پشتیبانی</label>
+        <select formControlName="typehc">
+          <option value="failure">خرابی</option>
+          <option value="ongoing">دایری</option>
+        </select>
+      </div>
+
+      <div class="">
+        <label> نتیجه تماس</label>
+        <select (change)="changeResult($event)" formControlName="result">
+          <option value="satisfy">راضی</option>
+          <option value="unsatisfy">ناراضی</option>
+        </select>
+      </div>
+
+      <div class="w-100 p-3" *ngIf="unsatisfying">
+        <label> علت نارضایتی</label>
+        <div class="row w-100">
+          <div class="col-md-4" *ngFor="let item of unsatisfyingTypes">
+            <input
+              type="checkbox"
+              [id]="item"
+              (change)="changeUnsatisfying($event, item)"
+            />
+            <label class="w-25"> {{ item }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="">
+        <button
+          (click)="update()"
+          *ngIf="!loadingProgress"
+          class="w-fit m-4"
+          type="submit"
+          mat-raised-button
+        >
+          بروزرسانی
+        </button>
+        <button
+          *ngIf="loadingProgress"
+          class="w-fit m-4"
+          type="submit"
+          mat-raised-button
+        >
+          <img src="../../assets/img/loading.gif" class="icon" />
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
