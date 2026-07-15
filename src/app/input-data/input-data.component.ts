@@ -13,8 +13,13 @@ import { PublicService } from '../service.service';
   styleUrl: './input-data.component.scss',
 })
 export class InputDataComponent implements OnInit {
+  paginationPageNumber = 1;
   loadingProgress = false;
   unsatisfying = false;
+  filteredName: any = '';
+  filterName = new FormGroup({
+    name: new FormControl(''),
+  });
   unsatisfyingTypes = [
     'link',
     'خرابی مودم',
@@ -39,18 +44,28 @@ export class InputDataComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.fetchMyFailures();
+    this.listenTofilterName();
+  }
+  listenTofilterName() {
+    this.filterName.get('name')?.valueChanges.subscribe((res) => {
+      this.filteredName = res;
+    });
+  }
+  filterCheck(item: string, item2: string) {
+    const result = item.includes(item2) || item2.includes(item) || item2 === '';
+    return result;
   }
   formInput = new FormGroup({
     tell: new FormControl('', Validators.required),
-    opname: new FormControl('', Validators.required),
-    opfamily: new FormControl('', Validators.required),
-    opType: new FormControl('', Validators.required),
-    typehc: new FormControl('', Validators.required),
+    opname: new FormControl(''),
+    opfamily: new FormControl(''),
+    opType: new FormControl(''),
+    typehc: new FormControl(''),
     datetime: new FormControl(''),
-    result: new FormControl('', Validators.required),
-    opId: new FormControl('', Validators.required),
-    resultunsatisfying: new FormControl('', Validators.required),
-    repairDateTime: new FormControl('', Validators.required),
+    result: new FormControl(''),
+    opId: new FormControl(''),
+    resultunsatisfying: new FormControl(''),
+    repairDateTime: new FormControl(''),
   });
   changeUnsatisfying(event: any, item: any) {
     if (event.target.checked) {
@@ -72,7 +87,13 @@ export class InputDataComponent implements OnInit {
         map((res: any) =>
           res.map((item: any) => ({
             ...item,
-            result: item.result === 'unsatisfy' ? 'ناراضی' : 'راضی',
+            typehc: item.typehc === 'failure' ? 'خرابی' : 'دایری',
+          })),
+        ),
+        map((res: any) =>
+          res.map((item: any) => ({
+            ...item,
+            result: item.result === 'unsatisfy' ? 'شکایت' : 'راضی',
           })),
         ),
         map((res: any) =>
@@ -91,6 +112,10 @@ export class InputDataComponent implements OnInit {
         }, 3);
       });
   }
+  events(pageNumber: any) {
+    this.paginationPageNumber = pageNumber;
+  }
+
   submit() {
     this.publicService.loadingProgress.next(true);
     const shamsiDate = new Intl.DateTimeFormat('fa-IR').format(new Date());

@@ -43,11 +43,13 @@
         *ngIf="!loadingProgress"
         class="w-fit m-4"
         type="submit"
+        [disabled]="formInput.invalid"
         mat-raised-button
       >
         بروزرسانی
       </button>
       <button
+        [disabled]="formInput.invalid"
         *ngIf="loadingProgress"
         class="w-fit m-4"
         type="submit"
@@ -60,24 +62,65 @@
 </div>
 
 <div class="headers">شماره های ثبت شده توسط من</div>
+<div class="w-100 text-right p-2 m-1">
+  <form [formGroup]="filterName">
+    <div>
+      <input matInput formControlName="name" />
+    </div>
+  </form>
+</div>
+
+<pagination-controls
+  [autoHide]="true"
+  [directionLinks]="false"
+  class="my-pagination especial"
+  (pageChange)="events($event)"
+></pagination-controls>
 <table>
-  <tr class="d-flex w-100 rows">
+  <tr class="w-100 rows bg-dark text-light">
     <td>شماره مشترک</td>
     <td>تاریخ تماس</td>
+    <td>نوع سرویس</td>
     <td>نتیجه</td>
+    <td>ویرایش</td>
+    <td>حذف</td>
   </tr>
-
-  <tr class="d-flex w-100 p-2 rows" *ngFor="let item of userFailure">
-    <td>{{ item.tell }}</td>
-    <td>{{ item.datetime }}</td>
-    <td>{{ item.result }}</td>
-    <td *ngIf="item.result === 'ناراضی'">
-      <span
-        class="border p-1 m-1 bg-dark text-light rounded"
-        *ngFor="let i of item.resultunsatisfying"
-      >
-        {{ i }}
-      </span>
-    </td>
+  <tr
+    class="w-100 p-2 rows"
+    *ngFor="
+      let item of userFailure
+        | paginate: { itemsPerPage: 20, currentPage: paginationPageNumber };
+      let i = index
+    "
+  >
+    <ng-container
+      *ngIf="
+        filterCheck(item?.tell, filteredName) ||
+        filterCheck(item?.typehc, filteredName) ||
+        filterCheck(item?.result, filteredName) ||
+        filterCheck(item?.datetime, filteredName)
+      "
+    >
+      <td>{{ item.tell }}</td>
+      <td>{{ item.datetime }}</td>
+      <td>{{ item.typehc }}</td>
+      <td>
+        {{ item.result }}
+        <ng-container *ngIf="item.result === 'شکایت'">
+          <span
+            class="border p-1 m-1 bg-dark text-light rounded"
+            *ngFor="let i of item.resultunsatisfying"
+          >
+            {{ i }}
+          </span>
+        </ng-container>
+      </td>
+      <td class="text-center">
+        <i class="fa fa-edit"></i>
+      </td>
+      <td class="text-center">
+        <i class="fa fa-trash"></i>
+      </td>
+    </ng-container>
   </tr>
 </table>

@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   ) {}
   activeProgress(handle: boolean) {}
   ngOnInit(): void {
+    this.publicService.loadingProgress.next(true);
     this.chechLoadingProgress();
   }
   chechLoadingProgress() {
