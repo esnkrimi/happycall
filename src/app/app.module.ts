@@ -13,6 +13,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { PersianPipe } from './persian.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatInputModule } from '@angular/material/input';
 import { InputDataComponent } from './input-data/input-data.component';
 import { LoginComponent } from './login/login.component';
 
@@ -27,9 +28,7 @@ export function detectDevice(width: any): boolean {
 registerLocaleData(localeFa);
 
 @NgModule({
-  declarations: [
-    AppComponent,InputDataComponent,LoginComponent
-  ],
+  declarations: [AppComponent, InputDataComponent, LoginComponent],
   imports: [
     BrowserModule,
     NgxPaginationModule,
@@ -37,6 +36,7 @@ registerLocaleData(localeFa);
     CommonModule,
     AppRoutingModule,
     MatButtonModule,
+    MatInputModule,
     MatProgressBarModule,
     HttpClientModule,
     FormsModule,

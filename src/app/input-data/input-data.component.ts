@@ -16,8 +16,10 @@ export class InputDataComponent implements OnInit {
   paginationPageNumber = 1;
   loadingProgress = false;
   unsatisfying = false;
+  unsatisfyingEdit = false;
   filteredName: any = '';
   editID = 0;
+  del = false;
   formEdit = new FormGroup({
     tell: new FormControl('', Validators.required),
     opname: new FormControl(''),
@@ -31,6 +33,7 @@ export class InputDataComponent implements OnInit {
     repairDateTime: new FormControl(''),
   });
   modal = false;
+  modalDel = false;
   filterName = new FormGroup({
     name: new FormControl(''),
   });
@@ -49,6 +52,7 @@ export class InputDataComponent implements OnInit {
   ];
   selectedUnsatisfying: any = [];
   userFailure: any = [];
+  editRow: any;
   constructor(
     private localStorage: LocalStorageService,
     private router: Router,
@@ -57,10 +61,18 @@ export class InputDataComponent implements OnInit {
     private publicService: PublicService,
   ) {}
 
-  modalShow(id: any) {
+  modalShow(id: any, del: boolean) {
     this.editID = id;
+    this.del = del;
     this.modal = true;
-    console.log(id);
+    this.editRow = this.userFailure.filter((res: any) => res.id === id)[0].tell;
+    this.formEdit.get('tell')?.setValue(this.editRow);
+  }
+
+  modalDelShow(id: any, del: boolean) {
+    this.editID = id;
+    this.del = del;
+    this.modalDel = true;
   }
 
   ngOnInit(): void {
@@ -146,7 +158,6 @@ export class InputDataComponent implements OnInit {
     this.formEdit.get('opType')?.setValue(this.localStorage.getItem('opType'));
     this.formEdit.get('opId')?.setValue(this.localStorage.getItem('opId'));
     this.formEdit.get('datetime')?.setValue(shamsiDate);
-    console.log(this.editID);
     this.serviceService
       .edit(this.formEdit.value, this.editID)
       .subscribe((res) => {
@@ -154,7 +165,13 @@ export class InputDataComponent implements OnInit {
         this.modal = false;
       });
   }
-
+  delete() {
+    this.serviceService.delete(this.editID).subscribe((res) => {
+      this.fetchMyFailures();
+      this.modalDel = false;
+      this.modal = false;
+    });
+  }
   submit() {
     this.publicService.loadingProgress.next(true);
     const shamsiDate = new Intl.DateTimeFormat('fa-IR').format(new Date());
@@ -167,11 +184,14 @@ export class InputDataComponent implements OnInit {
     this.formInput.get('datetime')?.setValue(shamsiDate);
     this.serviceService.submitFail(this.formInput.value).subscribe((res) => {
       this.fetchMyFailures();
-      console.log(res);
     });
   }
   changeResult(result: any) {
     this.unsatisfying =
       this.formInput.get('result')?.value === 'unsatisfy' ? true : false;
+  }
+  changeResultEdit(result: any) {
+    this.unsatisfyingEdit =
+      this.formEdit.get('result')?.value === 'unsatisfy' ? true : false;
   }
 }

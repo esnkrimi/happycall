@@ -23,17 +23,9 @@ if ($id == 2)
 if ($id == 3)
     fetchMyFailures($con);
 if ($id == 4)
-    addFactor($con);
+    edit($con);
 if ($id == 5)
-    removeFactor($con);
-if ($id == 6)
-    editRowFactor($con);
-if ($id == 7)
-    addRowFactor($con);
-if ($id == 8)
-    setPrepay($con);
-
-
+    delete($con);
 
 $link->close();
 ?>

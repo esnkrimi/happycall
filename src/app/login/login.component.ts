@@ -53,10 +53,9 @@ export class LoginComponent implements OnInit {
         this.localStorage.setItem('opId', res.id);
         console.log(this.user);
         setTimeout(() => {
-          console.log('yes');
           this.router.navigate(['']);
           this.publicValsService.loadinProgress.next(false);
-        }, 1000);
+        }, 1);
       });
   }
 }

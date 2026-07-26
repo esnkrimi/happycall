@@ -1,5 +1,10 @@
+:root {
+  --COLOR_PRIMARY: #244d29e5;
+  --COLOR_PRIMARY2: rgb(150, 207, 162);
+  --COLOR_PRIMARY3: rgba(19, 167, 31, 0.874);
+}
 .bg-dark {
-  background-color: rgb(10, 95, 53) !important;
+  background-color: var(--COLOR_PRIMARY) !important;
 }
 .formControl,
 label {
@@ -16,7 +21,7 @@ label {
   width: 15%;
 }
 .bg-green-dark {
-  background-color: #3c344eea !important;
+  background-color: var(--COLOR_PRIMARY) !important;
 }
 @font-face {
   font-family: "edwardian";
@@ -56,4 +61,21 @@ label {
 }
 .inline {
   display: inline-block;
+}
+
+.headers {
+  margin-top: 5vh;
+  margin-bottom: 2vh;
+  padding: 1vh;
+  width: 100%;
+  background-color: var(--COLOR_PRIMARY);
+  color: white;
+}
+
+.bg-darks {
+  background-color: var(--COLOR_PRIMARY2) !important;
+}
+
+.bg-primary3 {
+  background-color: var(--COLOR_PRIMARY3) !important;
 }

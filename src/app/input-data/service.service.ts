@@ -13,10 +13,12 @@ export class ServiceService {
     );
   }
 
+  delete(id: any) {
+    console.log(`${this.userBase}5&fid=${id}`);
+    return this.http.get(`${this.userBase}5&fid=${id}`);
+  }
+
   edit(formInput: any, id: any) {
-    console.log(
-      `${this.userBase}4&formInput=${JSON.stringify(formInput)}&fid=${id}`,
-    );
     return this.http.get(
       `${this.userBase}4&formInput=${JSON.stringify(formInput)}&fid=${id}`,
     );
