@@ -14,16 +14,46 @@
         <option value="دایری">دایری</option>
       </select>
     </div>
+    <div class="m-3 pt-4">
+      <div class="" w-100 *ngFor="let item of ques; let i = index">
+        <ng-container *ngIf="item.type === 'all' || item.type === getType()">
+          <div class="w-100 m-2 p-1">
+            <h5>
+              <span> {{ i + 1 }} - </span>
+              {{ item.title }}{{ item.type }}
+              <span class="text-muted">( {{ item.groups }} ) </span>
+            </h5>
+          </div>
+          <select
+            *ngIf="item.model === ''"
+            (change)="changeResult($event, item)"
+            formControlName="result"
+          >
+            <option *ngFor="let i of answer" [value]="i.score">
+              {{ i.answer }}
+            </option>
+          </select>
+          <div *ngIf="item.model === 'special'">
+            <select
+              (change)="changeResult($event, item)"
+              formControlName="result"
+            >
+              <option *ngFor="let j of scores" [value]="j">
+                {{ j }}
+              </option>
+            </select>
+          </div>
 
-    <div class="" *ngFor="let item of ques">
-      <ng-container *ngIf="item.type === getType()">
-        <label> {{ item.title }}</label>
-        <select (change)="changeResult($event, item)" formControlName="result">
-          <option *ngFor="let i of answer" [value]="i.score">
-            {{ i.answer }}
-          </option>
-        </select>
-      </ng-container>
+          <div *ngIf="item.model === 'text'">
+            <input
+              formControlName="modelText"
+              (change)="changeResult($event, item)"
+              [id]="item.id"
+            />
+            <button mat-raised-button>تایید</button>
+          </div>
+        </ng-container>
+      </div>
     </div>
 
     <div class="">
@@ -73,7 +103,6 @@
   <tr class="w-100 rows bg-darks text-light">
     <td>شماره مشترک</td>
     <td>تاریخ تماس</td>
-    <td>نوع سرویس</td>
     <td>حذف</td>
   </tr>
   <tr
@@ -93,9 +122,8 @@
     >
       <td>{{ item.tell }}</td>
       <td>{{ item.datetime }}</td>
-      <td>{{ item.type }}</td>
 
-      <td class="text-center" (click)="modalDelShow(item?.id, true)">
+      <td class="text-center" (click)="modalDelShow(item, true)">
         <i class="fa fa-trash"></i>
       </td>
     </ng-container>

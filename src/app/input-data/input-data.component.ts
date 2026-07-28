@@ -35,6 +35,8 @@ export class InputDataComponent implements OnInit {
       score: 1,
     },
   ];
+  modelText = new FormControl('');
+  scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   paginationPageNumber = 1;
   loadingProgress = false;
   unsatisfying = false;
@@ -92,8 +94,8 @@ export class InputDataComponent implements OnInit {
     this.formEdit.get('tell')?.setValue(this.editRow);
   }
 
-  modalDelShow(id: any, del: boolean) {
-    this.editID = id;
+  modalDelShow(item: any, del: boolean) {
+    this.editID = item;
     this.del = del;
     this.modalDel = true;
   }

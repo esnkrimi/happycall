@@ -8,13 +8,15 @@ export class ServiceService {
   userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
   constructor(private http: HttpClient) {}
   submitFail(formInput: any) {
-    return this.http.get(
-      `${this.userBase}2&formInput=${JSON.stringify(formInput)}`,
-    );
+    const body = new FormData();
+    body.append('formInput', JSON.stringify(formInput));
+    return this.http.post(`${this.userBase}2`, body);
   }
 
-  delete(id: any) {
-    return this.http.get(`${this.userBase}5&fid=${id}`);
+  delete(item: any) {
+    return this.http.get(
+      `${this.userBase}5&datetime=${item.datetime}&userid=${item.userid}&tell=${item.tell}`,
+    );
   }
 
   edit(formInput: any, id: any) {
