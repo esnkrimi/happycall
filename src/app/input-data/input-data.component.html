@@ -2,79 +2,90 @@
   <p class="text-end text-muted opacity-50 mx-3"></p>
   <hr />
   <form [formGroup]="formInput">
-    <div>
+    <div *ngIf="handle === 0">
       <label> شماره تماس</label>
       <input formControlName="tell" />
+      <button
+        *ngIf="chechtell() >= 5"
+        (click)="handle = handle + 1"
+        mat-raised-button
+      >
+        تایید
+      </button>
     </div>
 
-    <div class="">
+    <div *ngIf="handle === 1">
       <label> نوع پشتیبانی</label>
-      <select formControlName="typehc">
+      <select (change)="handle = handle + 1" formControlName="typehc">
         <option value="خرابی">خرابی</option>
         <option value="دایری">دایری</option>
       </select>
     </div>
     <div class="m-3 pt-4">
       <div class="" w-100 *ngFor="let item of ques; let i = index">
-        <ng-container *ngIf="item.type === 'all' || item.type === getType()">
-          <div class="w-100 m-2 p-1">
-            <h5>
-              <span> {{ i + 1 }} - </span>
-              {{ item.title }}{{ item.type }}
-              <span class="text-muted">( {{ item.groups }} ) </span>
-            </h5>
-          </div>
-          <select
-            *ngIf="item.model === ''"
-            (change)="changeResult($event, item)"
-            formControlName="result"
-          >
-            <option *ngFor="let i of answer" [value]="i.score">
-              {{ i.answer }}
-            </option>
-          </select>
-          <div *ngIf="item.model === 'special'">
-            <select
-              (change)="changeResult($event, item)"
-              formControlName="result"
+        <ng-container *ngIf="handle > 1">
+          <ng-container *ngIf="handle === i + 2">
+            <ng-container
+              *ngIf="item.type === 'all' || item.type === getType()"
             >
-              <option *ngFor="let j of scores" [value]="j">
-                {{ j }}
-              </option>
-            </select>
-          </div>
+              <div class="w-100 m-2 p-1">
+                <h5>
+                  <span> {{ i + 1 }} - </span>
+                  {{ item.title }}
+                  <span class="text-muted">( {{ item.groups }} ) </span>
+                </h5>
+              </div>
+              <select
+                [id]="item.id"
+                *ngIf="item.model === ''"
+                (change)="changeResult($event, item)"
+              >
+                <option selected="selected">....</option>
+                <option *ngFor="let i of answer" [value]="i.score">
+                  {{ i.answer }}
+                </option>
+              </select>
+              <div *ngIf="item.model === 'special'">
+                <select
+                  (change)="changeResult($event, item)"
+                  formControlName="result"
+                >
+                  <option *ngFor="let j of scores" [value]="j">
+                    {{ j }}
+                  </option>
+                </select>
+              </div>
 
-          <div *ngIf="item.model === 'text'">
-            <input
-              formControlName="modelText"
-              (change)="changeResult($event, item)"
-              [id]="item.id"
-            />
-            <button mat-raised-button>تایید</button>
-          </div>
+              <div *ngIf="item.model === 'text'">
+                <input
+                  formControlName="modelText"
+                  (change)="changeResult($event, item)"
+                  [id]="item.id"
+                />
+                <button mat-raised-button>تایید</button>
+              </div>
+            </ng-container>
+          </ng-container>
         </ng-container>
       </div>
-    </div>
-
-    <div class="">
+      <div class="">
+        <button
+          (click)="submit()"
+          class="w-fit m-4"
+          type="submit"
+          *ngIf="handle === ques.length + 2"
+          mat-raised-button
+        >
+          بروزرسانی
+        </button>
+      </div>
       <button
-        (click)="submit()"
-        *ngIf="!loadingProgress"
-        class="w-fit m-4"
-        type="submit"
-        [disabled]="formInput.invalid"
+        *ngIf="handle > 0"
+        class="m-2"
+        (click)="handle = handle - 1"
         mat-raised-button
       >
-        بروزرسانی
-      </button>
-      <button
-        [disabled]="formInput.invalid"
-        *ngIf="loadingProgress"
-        class="w-fit m-4"
-        type="submit"
-        mat-raised-button
-      >
-        <img src="../../assets/img/loading.gif" class="icon" />
+        مرحله قبل
       </button>
     </div>
   </form>

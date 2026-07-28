@@ -35,6 +35,7 @@ export class InputDataComponent implements OnInit {
       score: 1,
     },
   ];
+  handle = 0;
   modelText = new FormControl('');
   scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   paginationPageNumber = 1;
@@ -218,6 +219,7 @@ export class InputDataComponent implements OnInit {
     });
   }
   changeResult(result: any, item: any) {
+    this.handle++;
     this.score = result?.target?.value;
     const tell = this.formInput.get('tell')?.value;
     const userID = this.localStorage.getItem('opId');
@@ -237,5 +239,9 @@ export class InputDataComponent implements OnInit {
   changeResultEdit(result: any) {
     this.unsatisfyingEdit =
       this.formEdit.get('result')?.value === 'unsatisfy' ? true : false;
+  }
+  chechtell() {
+    const tell: any = this.formInput.get('tell')?.value;
+    return tell.length;
   }
 }
