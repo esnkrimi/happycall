@@ -10,31 +10,20 @@
     <div class="">
       <label> نوع پشتیبانی</label>
       <select formControlName="typehc">
-        <option value="failure">خرابی</option>
-        <option value="ongoing">دایری</option>
+        <option value="خرابی">خرابی</option>
+        <option value="دایری">دایری</option>
       </select>
     </div>
 
-    <div class="">
-      <label> نتیجه تماس</label>
-      <select (change)="changeResult($event)" formControlName="result">
-        <option value="satisfy">راضی</option>
-        <option value="unsatisfy">ناراضی</option>
-      </select>
-    </div>
-
-    <div class="w-100 p-3" *ngIf="unsatisfying">
-      <label> علت نارضایتی</label>
-      <div class="row w-100">
-        <div class="col-md-4" *ngFor="let item of unsatisfyingTypes">
-          <input
-            type="checkbox"
-            [id]="item"
-            (change)="changeUnsatisfying($event, item)"
-          />
-          <label class="w-25"> {{ item }}</label>
-        </div>
-      </div>
+    <div class="" *ngFor="let item of ques">
+      <ng-container *ngIf="item.type === getType()">
+        <label> {{ item.title }}</label>
+        <select (change)="changeResult($event, item)" formControlName="result">
+          <option *ngFor="let i of answer" [value]="i.score">
+            {{ i.answer }}
+          </option>
+        </select>
+      </ng-container>
     </div>
 
     <div class="">
@@ -85,8 +74,6 @@
     <td>شماره مشترک</td>
     <td>تاریخ تماس</td>
     <td>نوع سرویس</td>
-    <td>نتیجه</td>
-    <td>ویرایش</td>
     <td>حذف</td>
   </tr>
   <tr
@@ -100,28 +87,14 @@
     <ng-container
       *ngIf="
         filterCheck(item?.tell, filteredName) ||
-        filterCheck(item?.typehc, filteredName) ||
-        filterCheck(item?.result, filteredName) ||
+        filterCheck(item?.type, filteredName) ||
         filterCheck(item?.datetime, filteredName)
       "
     >
       <td>{{ item.tell }}</td>
       <td>{{ item.datetime }}</td>
-      <td>{{ item.typehc }}</td>
-      <td>
-        {{ item.result }}
-        <ng-container *ngIf="item.result === 'شکایت'">
-          <span
-            class="border p-1 m-1 bg-dark text-light rounded"
-            *ngFor="let i of item.resultunsatisfying"
-          >
-            {{ i }}
-          </span>
-        </ng-container>
-      </td>
-      <td (click)="modalShow(item?.id, false)" class="text-center">
-        <i class="fa fa-edit"></i>
-      </td>
+      <td>{{ item.type }}</td>
+
       <td class="text-center" (click)="modalDelShow(item?.id, true)">
         <i class="fa fa-trash"></i>
       </td>

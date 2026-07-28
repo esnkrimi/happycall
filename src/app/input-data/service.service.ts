@@ -14,7 +14,6 @@ export class ServiceService {
   }
 
   delete(id: any) {
-    console.log(`${this.userBase}5&fid=${id}`);
     return this.http.get(`${this.userBase}5&fid=${id}`);
   }
 
@@ -24,8 +23,11 @@ export class ServiceService {
     );
   }
 
+  fetchMyQ() {
+    return this.http.get(`${this.userBase}6`);
+  }
+
   fetchMyFailures(userid: any) {
-    console.log(`${this.userBase}3&userid=${userid}`);
     return this.http.get(`${this.userBase}3&userid=${userid}`);
   }
 }

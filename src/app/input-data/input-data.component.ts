@@ -13,10 +13,33 @@ import { PublicService } from '../service.service';
   styleUrl: './input-data.component.scss',
 })
 export class InputDataComponent implements OnInit {
+  answer = [
+    {
+      answer: 'بسیار راضی',
+      score: 5,
+    },
+    {
+      answer: 'راضی',
+      score: 4,
+    },
+    {
+      answer: 'متوسط',
+      score: 3,
+    },
+    {
+      answer: 'ناراضی',
+      score: 2,
+    },
+    {
+      answer: 'بسیار ناراضی',
+      score: 1,
+    },
+  ];
   paginationPageNumber = 1;
   loadingProgress = false;
   unsatisfying = false;
   unsatisfyingEdit = false;
+  ques: any = [];
   filteredName: any = '';
   editID = 0;
   del = false;
@@ -78,6 +101,7 @@ export class InputDataComponent implements OnInit {
   ngOnInit(): void {
     this.fetchMyFailures();
     this.listenTofilterName();
+    this.fetchMyQ();
   }
   listenTofilterName() {
     this.filterName.get('name')?.valueChanges.subscribe((res) => {
@@ -100,6 +124,8 @@ export class InputDataComponent implements OnInit {
     resultunsatisfying: new FormControl(''),
     repairDateTime: new FormControl(''),
   });
+  resultTotal: any = [];
+  score: any;
   changeUnsatisfying(event: any, item: any) {
     if (event.target.checked) {
       this.selectedUnsatisfying.push(item);
@@ -113,22 +139,25 @@ export class InputDataComponent implements OnInit {
       .get('resultunsatisfying')
       ?.setValue(JSON.stringify(this.selectedUnsatisfying));
   }
+
+  fetchMyQ() {
+    const userLevel: any = this.localStorage.getItem('level');
+    this.serviceService
+      .fetchMyQ()
+      .pipe(
+        map((res: any) => res.filter((res: any) => res.level === userLevel)),
+      )
+      .subscribe((res) => {
+        this.ques = res;
+      });
+  }
+
   fetchMyFailures() {
+    this.publicService.loadingProgress.next(false);
+
     this.serviceService
       .fetchMyFailures(this.localStorage.getItem('opId'))
       .pipe(
-        map((res: any) =>
-          res.map((item: any) => ({
-            ...item,
-            typehc: item.typehc === 'failure' ? 'خرابی' : 'دایری',
-          })),
-        ),
-        map((res: any) =>
-          res.map((item: any) => ({
-            ...item,
-            result: item.result === 'unsatisfy' ? 'شکایت' : 'راضی',
-          })),
-        ),
         map((res: any) =>
           res.map((item: any) => ({
             ...item,
@@ -182,13 +211,26 @@ export class InputDataComponent implements OnInit {
     this.formInput.get('opType')?.setValue(this.localStorage.getItem('opType'));
     this.formInput.get('opId')?.setValue(this.localStorage.getItem('opId'));
     this.formInput.get('datetime')?.setValue(shamsiDate);
-    this.serviceService.submitFail(this.formInput.value).subscribe((res) => {
+    this.serviceService.submitFail(this.resultTotal).subscribe((res) => {
       this.fetchMyFailures();
     });
   }
-  changeResult(result: any) {
-    this.unsatisfying =
-      this.formInput.get('result')?.value === 'unsatisfy' ? true : false;
+  changeResult(result: any, item: any) {
+    this.score = result?.target?.value;
+    const tell = this.formInput.get('tell')?.value;
+    const userID = this.localStorage.getItem('opId');
+    this.resultTotal = this.resultTotal.filter((x: any) => x.id !== item.id);
+    this.resultTotal.push({
+      ...item,
+      score: this.score,
+      userid: userID,
+      tell: tell,
+      ratescore: Number(this.score) * Number(item.rate),
+    });
+  }
+  getType() {
+    const res = this.formInput.get('typehc')?.value;
+    return res;
   }
   changeResultEdit(result: any) {
     this.unsatisfyingEdit =
