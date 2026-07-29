@@ -36,7 +36,9 @@ export class InputDataComponent implements OnInit {
     },
   ];
   handle = 0;
-  modelText = new FormControl('');
+  formSuggest = new FormGroup({
+    modelText: new FormControl('', Validators.required),
+  });
   scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   paginationPageNumber = 1;
   loadingProgress = false;
@@ -109,6 +111,7 @@ export class InputDataComponent implements OnInit {
   listenTofilterName() {
     this.filterName.get('name')?.valueChanges.subscribe((res) => {
       this.filteredName = res;
+      console.log(res);
     });
   }
   filterCheck(item: string, item2: string) {
@@ -116,7 +119,7 @@ export class InputDataComponent implements OnInit {
     return result;
   }
   formInput = new FormGroup({
-    tell: new FormControl('', Validators.required),
+    tell: new FormControl('', [Validators.required, Validators.minLength(5)]),
     opname: new FormControl(''),
     opfamily: new FormControl(''),
     opType: new FormControl(''),
@@ -215,7 +218,7 @@ export class InputDataComponent implements OnInit {
     this.formInput.get('opId')?.setValue(this.localStorage.getItem('opId'));
     this.formInput.get('datetime')?.setValue(shamsiDate);
     this.serviceService.submitFail(this.resultTotal).subscribe((res) => {
-      this.fetchMyFailures();
+      window.location.reload();
     });
   }
   changeResult(result: any, item: any) {

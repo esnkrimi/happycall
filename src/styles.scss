@@ -1,7 +1,7 @@
 :root {
   --COLOR_PRIMARY: #244d29e5;
   --COLOR_PRIMARY2: rgb(150, 207, 162);
-  --COLOR_PRIMARY3: rgba(19, 167, 31, 0.874);
+  --COLOR_PRIMARY3: rgba(8, 146, 31, 0.874);
 }
 .bg-dark {
   background-color: var(--COLOR_PRIMARY) !important;
@@ -78,4 +78,16 @@ label {
 
 .bg-primary3 {
   background-color: var(--COLOR_PRIMARY3) !important;
+}
+
+.animate-fade {
+  animation: fade 2.2s forwards;
+}
+@keyframes fade {
+  0% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
 }

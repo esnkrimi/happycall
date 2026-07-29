@@ -26,7 +26,6 @@ export class ServiceService {
   }
 
   fetchMyQ() {
-    console.log(`${this.userBase}6`);
     return this.http.get(`${this.userBase}6`);
   }
 

@@ -3,10 +3,10 @@
   <hr />
   <form [formGroup]="formInput">
     <div *ngIf="handle === 0">
-      <label> شماره تماس</label>
-      <input formControlName="tell" />
+      <label> شماره ثابت سرویس مشترک</label>
+      <input formControlName="tell" type="tel" />
       <button
-        *ngIf="chechtell() >= 5"
+        [disabled]="formInput.invalid"
         (click)="handle = handle + 1"
         mat-raised-button
       >
@@ -22,58 +22,64 @@
       </select>
     </div>
     <div class="m-3 pt-4">
-      <div class="" w-100 *ngFor="let item of ques; let i = index">
+      <div class="w-100" *ngFor="let item of ques; let i = index">
         <ng-container *ngIf="handle > 1">
           <ng-container *ngIf="handle === i + 2">
             <ng-container
               *ngIf="item.type === 'all' || item.type === getType()"
             >
-              <div class="w-100 m-2 p-1">
-                <h5>
-                  <span> {{ i + 1 }} - </span>
-                  {{ item.title }}
-                  <span class="text-muted">( {{ item.groups }} ) </span>
-                </h5>
-              </div>
-              <select
-                [id]="item.id"
-                *ngIf="item.model === ''"
-                (change)="changeResult($event, item)"
-              >
-                <option selected="selected">....</option>
-                <option *ngFor="let i of answer" [value]="i.score">
-                  {{ i.answer }}
-                </option>
-              </select>
-              <div *ngIf="item.model === 'special'">
+              <div class="animate-fade">
+                <div class="w-100 m-2 p-1">
+                  <h5>
+                    <span> {{ i + 1 }} - </span>
+                    {{ item.title }}
+                    <span class="text-muted">( {{ item.groups }} ) </span>
+                  </h5>
+                </div>
                 <select
+                  [id]="item.id"
+                  *ngIf="item.model === ''"
                   (change)="changeResult($event, item)"
-                  formControlName="result"
                 >
-                  <option *ngFor="let j of scores" [value]="j">
-                    {{ j }}
+                  <option selected="selected">....</option>
+                  <option *ngFor="let i of answer" [value]="i.score">
+                    {{ i.answer }}
                   </option>
                 </select>
-              </div>
+                <div *ngIf="item.model === 'special'">
+                  <select
+                    (change)="changeResult($event, item)"
+                    formControlName="result"
+                  >
+                    <option *ngFor="let j of scores" [value]="j">
+                      {{ j }}
+                    </option>
+                  </select>
+                </div>
 
-              <div *ngIf="item.model === 'text'">
-                <input
-                  formControlName="modelText"
-                  (change)="changeResult($event, item)"
-                  [id]="item.id"
-                />
-                <button mat-raised-button>تایید</button>
+                <div *ngIf="item.model === 'text'">
+                  <form [formGroup]="formSuggest">
+                    <input
+                      formControlName="modelText"
+                      (change)="changeResult($event, item)"
+                      [id]="item.id"
+                    />
+                    <button mat-raised-button [disabled]="formSuggest.invalid">
+                      تایید
+                    </button>
+                  </form>
+                </div>
               </div>
             </ng-container>
           </ng-container>
         </ng-container>
       </div>
-      <div class="">
+      <div *ngIf="handle === ques.length + 2">
+        <h5>برای تایید و ثبت نهایی لطفا از دکمه بروز رسانی استفاده نمایید.</h5>
         <button
           (click)="submit()"
           class="w-fit m-4"
           type="submit"
-          *ngIf="handle === ques.length + 2"
           mat-raised-button
         >
           بروزرسانی
@@ -81,7 +87,7 @@
       </div>
       <button
         *ngIf="handle > 0"
-        class="m-2"
+        class="m-4"
         (click)="handle = handle - 1"
         mat-raised-button
       >
@@ -127,7 +133,6 @@
     <ng-container
       *ngIf="
         filterCheck(item?.tell, filteredName) ||
-        filterCheck(item?.type, filteredName) ||
         filterCheck(item?.datetime, filteredName)
       "
     >
@@ -140,66 +145,6 @@
     </ng-container>
   </tr>
 </table>
-
-<div class="modals text-center" *ngIf="modal">
-  <div class="w-75 bg-light inline m-auto">
-    <form [formGroup]="formEdit">
-      <div>
-        <label> شماره تماس</label>
-        <input formControlName="tell" />
-      </div>
-
-      <div class="">
-        <label> نوع پشتیبانی</label>
-        <select formControlName="typehc">
-          <option value="failure" [value]="editRow.tell">خرابی</option>
-          <option value="ongoing">دایری</option>
-        </select>
-      </div>
-
-      <div class="">
-        <label> نتیجه تماس</label>
-        <select (change)="changeResultEdit($event)" formControlName="result">
-          <option value="satisfy" check>راضی</option>
-          <option value="unsatisfy">ناراضی</option>
-        </select>
-      </div>
-
-      <div class="w-100 p-3" *ngIf="unsatisfyingEdit">
-        <label> علت نارضایتی</label>
-        <div class="row w-100">
-          <div class="col-md-4" *ngFor="let item of unsatisfyingTypes">
-            <input
-              type="checkbox"
-              [id]="item"
-              (change)="changeUnsatisfying($event, item)"
-            />
-            <label class="w-25"> {{ item }}</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="">
-        <button
-          (click)="update()"
-          class="w-fit m-4"
-          type="submit"
-          mat-raised-button
-        >
-          بروزرسانی
-        </button>
-        <button
-          (click)="modal = false"
-          class="w-fit m-4"
-          type="submit"
-          mat-raised-button
-        >
-          انصراف
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
 <div class="modals text-center" *ngIf="modalDel">
   <div class="w-50 mt-4 bg-light inline">
