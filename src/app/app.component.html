@@ -21,6 +21,32 @@
       </span>
       <span> ورود اطلاعات </span>
     </div>
+
+    <div
+      (click)="activeProgress(true)"
+      [routerLink]="'/inputData'"
+      [class.selected-div]="
+        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
+      "
+      class="text-muted opacity-50 w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span> ویرایش اطلاعات (بزودی)</span>
+    </div>
+
+    <div
+      [class.selected-div]="
+        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
+      "
+      class="text-muted opacity-50 w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span> تحلیل داده (بزودی) </span>
+    </div>
   </div>
   <div class="w-75 p-4">
     <div class="loading" *ngIf="loadinProgress"></div>

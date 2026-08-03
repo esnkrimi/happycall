@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class ServiceService {
   userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
   constructor(private http: HttpClient) {}
-  submitFail(formInput: any) {
+  submitFail(formInput: any, type: any) {
     const body = new FormData();
     body.append('formInput', JSON.stringify(formInput));
     return this.http.post(`${this.userBase}2`, body);
@@ -25,8 +25,9 @@ export class ServiceService {
     );
   }
 
-  fetchMyQ() {
-    return this.http.get(`${this.userBase}6`);
+  fetchMyQ(type: any) {
+    console.log(`${this.userBase}6&type=${type}`);
+    return this.http.get(`${this.userBase}6&type=${type}`);
   }
 
   fetchMyFailures(userid: any) {

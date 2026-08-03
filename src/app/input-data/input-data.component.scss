@@ -27,3 +27,19 @@ button {
   height: 4.5vh;
   margin-right: 1vh;
 }
+
+.card-header {
+  font-size: 2.3vh;
+  cursor: pointer;
+  &:hover {
+    background-color: aqua;
+  }
+}
+.table > tr > td {
+  border: solid 1px gray;
+  padding: 1vh;
+}
+
+.text-small {
+  font-size: 1.5vh !important;
+}
