@@ -10,7 +10,7 @@ export class ServiceService {
   submitFail(formInput: any, type: any) {
     const body = new FormData();
     body.append('formInput', JSON.stringify(formInput));
-    return this.http.post(`${this.userBase}2`, body);
+    return this.http.post(`${this.userBase}2&type=${type}`, body);
   }
 
   delete(item: any) {

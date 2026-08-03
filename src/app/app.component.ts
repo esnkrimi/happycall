@@ -12,15 +12,28 @@ import { PublicService } from './service.service';
 export class AppComponent implements OnInit {
   loadinProgress = false;
   pathFull = '';
+  user: any = {
+    name: '',
+    family: '',
+  };
   constructor(
     private publicService: PublicService,
     private route: ActivatedRoute,
     private localStorage: LocalStorageService,
   ) {}
   activeProgress(handle: boolean) {}
+  fetchUser() {
+    this.user.name = this.localStorage.getItem('opfamily');
+    this.user.family = this.localStorage.getItem('opname');
+    this.user.level = this.localStorage.getItem('level');
+    this.user.opType = this.localStorage.getItem('opType');
+    this.user.tell = this.localStorage.getItem('tell');
+    this.user.address = this.localStorage.getItem('address');
+  }
   ngOnInit(): void {
     this.publicService.loadingProgress.next(true);
     this.chechLoadingProgress();
+    this.fetchUser();
   }
   chechLoadingProgress() {
     this.publicService.loadingProgress.subscribe((res: any) => {

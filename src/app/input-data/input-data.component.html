@@ -1,6 +1,14 @@
 <div class="text-end inner shadow-sm w-100 bg-white rounded">
   <p class="text-end text-muted opacity-50 mx-3"></p>
   <hr />
+  <div class="w-100 loading-bar" *ngIf="loadQ">
+    <mat-progress-bar
+      class="loader"
+      mode="indeterminate"
+      color="accent"
+    ></mat-progress-bar>
+  </div>
+  <br /><br />
   <form [formGroup]="formInput">
     <div *ngIf="handle === 0">
       <label> شماره ثابت سرویس مشترک</label>
@@ -19,7 +27,6 @@
         <option value="خرابی">خرابی</option>
         <option value="دایری">دایری</option>
       </select>
-      <span *ngIf="loadQ"> لطفا صبر کنید </span>
     </div>
     <div class="m-3 pt-4">
       <div class="w-100" *ngFor="let item of ques; let i = index">
@@ -130,25 +137,22 @@
       (click)="showDetails = showDetails == i ? -1 : i"
     >
       <span class="text-muted text-small"> شماره مشترک </span>
-
       {{ group.tell }}
-      <!--
-    <span>
-      {{ group["items"][0]?.type }}
-    </span>
-    --></div>
-
+      <span>
+        {{ group["items"][0]?.types }}
+      </span>
+    </div>
     <table class="table" *ngIf="showDetails === i">
       <tr>
         <td>شناسه</td>
         <td>پرسش</td>
         <td>امتیاز</td>
-        <td>ratescore</td>
+        <td>Score</td>
         <td>گروه</td>
         <td>تاریخ</td>
       </tr>
-      <tr *ngFor="let item of group.items">
-        <td>{{ item.qid }}</td>
+      <tr *ngFor="let item of group.items; let j = index">
+        <td>{{ j + 1 }}</td>
         <td>{{ item.title }}</td>
         <td>{{ item.score }}</td>
         <td>{{ item.ratescore }}</td>

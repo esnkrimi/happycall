@@ -189,7 +189,7 @@ export class InputDataComponent implements OnInit {
 
   fetchMyFailures() {
     this.publicService.loadingProgress.next(false);
-
+    this.loadQ = true;
     this.serviceService
       .fetchMyFailures(this.localStorage.getItem('opId'))
       .pipe(
@@ -204,7 +204,7 @@ export class InputDataComponent implements OnInit {
       )
       .subscribe((res) => {
         this.userFailure = res;
-
+        console.log(res);
         this.groupedData = Object.entries(
           res.reduce((acc: any, item: any) => {
             (acc[item.tell] ??= []).push(item);
@@ -215,8 +215,8 @@ export class InputDataComponent implements OnInit {
           items,
         }));
 
+        this.loadQ = false;
         console.log(this.groupedData);
-
         setTimeout(() => {
           this.publicService.loadingProgress.next(false);
         }, 3);

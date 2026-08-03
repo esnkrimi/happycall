@@ -51,6 +51,8 @@ export class LoginComponent implements OnInit {
         this.localStorage.setItem('opname', res.name);
         this.localStorage.setItem('opfamily', res.family);
         this.localStorage.setItem('opType', res.type);
+        this.localStorage.setItem('tell', res.tell);
+        this.localStorage.setItem('address', res.address);
         this.localStorage.setItem('opId', res.id);
         setTimeout(() => {
           this.router.navigate(['']);

@@ -3,6 +3,7 @@
 >
   <div class="w-50">سامانه تماس شاد</div>
   <div class="cursor-pointer">
+    <i class="px-2">{{ user.name }}-{{ user.family }}</i>
     <i class="fa fa-power-off" (click)="logoff()"></i>
   </div>
 </div>
@@ -50,6 +51,22 @@
   </div>
   <div class="w-75 p-4">
     <div class="loading" *ngIf="loadinProgress"></div>
+    <div class="m-2 p-3 border bg-white w-50">
+      <p>
+        <span>{{ user.name }} - </span>
+        <span>{{ user.family }}</span>
+      </p>
+      <p>
+        <span> عنوان کاربری : </span>
+        <span> {{ user.level }}</span>
+      </p>
+      <p>
+        <span> {{ user.address }}</span>
+      </p>
+      <p>
+        <span> {{ user.tell }}</span>
+      </p>
+    </div>
     <router-outlet></router-outlet>
   </div>
 </div>
