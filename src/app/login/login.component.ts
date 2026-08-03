@@ -56,6 +56,7 @@ export class LoginComponent implements OnInit {
         this.localStorage.setItem('opId', res.id);
         setTimeout(() => {
           this.router.navigate(['']);
+          window.location.reload();
           this.publicValsService.loadinProgress.next(false);
         }, 1);
       });

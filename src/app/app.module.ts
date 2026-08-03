@@ -16,6 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatInputModule } from '@angular/material/input';
 import { InputDataComponent } from './input-data/input-data.component';
 import { LoginComponent } from './login/login.component';
+import { MydataComponent } from './mydata/mydata.component';
 
 export const DEVICE_WIDTH = new InjectionToken<string>('DEVICE_WIDTH');
 export const KONVA = new InjectionToken<string>('konva');
@@ -28,7 +29,12 @@ export function detectDevice(width: any): boolean {
 registerLocaleData(localeFa);
 
 @NgModule({
-  declarations: [AppComponent, InputDataComponent, LoginComponent],
+  declarations: [
+    AppComponent,
+    MydataComponent,
+    InputDataComponent,
+    LoginComponent,
+  ],
   imports: [
     BrowserModule,
     NgxPaginationModule,

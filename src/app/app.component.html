@@ -7,11 +7,11 @@
     <i class="fa fa-power-off" (click)="logoff()"></i>
   </div>
 </div>
-<div class="bg-light w-100 d-flex">
-  <div class="w-25">
+<div class="bg-white w-100 d-flex">
+  <div class="w-25 border h-100">
     <div
       (click)="activeProgress(true)"
-      [routerLink]="'/inputData'"
+      [routerLink]="'/'"
       [class.selected-div]="
         pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
       "
@@ -21,6 +21,20 @@
         <img src="../assets/img/arpu.png" class="icon" />
       </span>
       <span> ورود اطلاعات </span>
+    </div>
+
+    <div
+      (click)="activeProgress(true)"
+      [routerLink]="'/mydata'"
+      [class.selected-div]="
+        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
+      "
+      class="hover-color w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span> شماره های ثبت شده توسط من </span>
     </div>
 
     <div
@@ -36,21 +50,9 @@
       </span>
       <span> ویرایش اطلاعات (بزودی)</span>
     </div>
-
-    <div
-      [class.selected-div]="
-        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
-      "
-      class="text-muted opacity-50 w-100 text-end p-2 border"
-    >
-      <span>
-        <img src="../assets/img/arpu.png" class="icon" />
-      </span>
-      <span> تحلیل داده (بزودی) </span>
-    </div>
-  </div>
-  <div class="w-75 p-4">
-    <div class="loading" *ngIf="loadinProgress"></div>
+    <br />
+    <hr />
+    <br />
     <div class="m-2 p-3 border bg-white w-50">
       <p>
         <span>{{ user.name }} - </span>
@@ -58,15 +60,21 @@
       </p>
       <p>
         <span> عنوان کاربری : </span>
-        <span> {{ user.level }}</span>
+        <span>
+          لایه
+          {{ user.level }}</span
+        >
       </p>
       <p>
-        <span> {{ user.address }}</span>
+        <span> آدرس :{{ user.address }}</span>
       </p>
       <p>
-        <span> {{ user.tell }}</span>
+        <span>شماره تماس : {{ user.tell }}</span>
       </p>
     </div>
+  </div>
+  <div class="w-75 p-4">
+    <div class="loading" *ngIf="loadinProgress"></div>
     <router-outlet></router-outlet>
   </div>
 </div>

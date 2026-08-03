@@ -9,11 +9,11 @@ import { PublicService } from '../service.service';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
-  selector: 'app-input-data',
-  templateUrl: './input-data.component.html',
-  styleUrl: './input-data.component.scss',
+  selector: 'app-mydata',
+  templateUrl: './mydata.component.html',
+  styleUrl: './mydata.component.scss',
 })
-export class InputDataComponent implements OnInit {
+export class MydataComponent implements OnInit {
   loadQ = false;
   answer = [
     {
@@ -265,7 +265,6 @@ export class InputDataComponent implements OnInit {
     this.formInput.get('datetime')?.setValue(shamsiDate);
     const type = this.formInput.get('typehc')?.value;
     this.serviceService.submitFail(this.resultTotal, type).subscribe((res) => {
-      alert('با موفقیت ثبت شد');
       window.location.reload();
     });
   }

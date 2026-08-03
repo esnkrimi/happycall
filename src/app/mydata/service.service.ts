@@ -27,6 +27,7 @@ export class ServiceService {
 
   fetchMyQ(type: any) {
     const level = localStorage.getItem('opId');
+    console.log(`${this.userBase}6&type=${type}&level=${level}`);
     return this.http.get(`${this.userBase}6&type=${type}&level=${level}`);
   }
 

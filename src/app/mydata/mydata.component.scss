@@ -1,0 +1,45 @@
+.rows:hover {
+  background-color: rgb(213, 213, 218);
+  cursor: pointer;
+}
+.modals {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 9;
+  left: 0;
+  top: 0;
+  background-color: rgba(35, 41, 73, 0.918);
+}
+.input-style {
+  width: 15vw;
+  height: 4vh;
+}
+.fa {
+  cursor: pointer;
+}
+input {
+  width: 20vw;
+  height: 5vh;
+}
+button {
+  width: 7vw;
+  height: 4.5vh;
+  margin-right: 1vh;
+}
+
+.card-header {
+  font-size: 2.3vh;
+  cursor: pointer;
+  &:hover {
+    background-color: aqua;
+  }
+}
+.table > tr > td {
+  border: solid 1px gray;
+  padding: 1vh;
+}
+
+.text-small {
+  font-size: 1.5vh !important;
+}

@@ -1,6 +1,5 @@
-<div class="text-end inner shadow-sm w-100 bg-white rounded">
+<div class="text-end inner w-100 bg-white rounded">
   <p class="text-end text-muted opacity-50 mx-3"></p>
-  <hr />
   <div class="w-100 loading-bar" *ngIf="loadQ">
     <mat-progress-bar
       class="loader"
@@ -102,65 +101,6 @@
       </button>
     </div>
   </form>
-</div>
-
-<div class="headers">شماره های ثبت شده توسط من</div>
-<div class="w-100 text-right p-2 m-1">
-  <form [formGroup]="filterName">
-    <div>
-      <input
-        class="input-style"
-        placeholder="فیلتر شماره مشترک"
-        formControlName="name"
-      />
-    </div>
-  </form>
-</div>
-
-<pagination-controls
-  [autoHide]="true"
-  [directionLinks]="false"
-  class="my-pagination especial"
-  (pageChange)="events($event)"
-></pagination-controls>
-
-<div class="d-flex justify-content-between w-100">
-  <div></div>
-  <div>
-    <button mat-raised-button (click)="exportExcel()">دانلود Excel</button>
-  </div>
-</div>
-<div *ngFor="let group of groupedData; let i = index">
-  <ng-container *ngIf="filterCheck(group.tell, filteredName)">
-    <div
-      class="card-header p-2 border"
-      (click)="showDetails = showDetails == i ? -1 : i"
-    >
-      <span class="text-muted text-small"> شماره مشترک </span>
-      {{ group.tell }}
-      <span>
-        {{ group["items"][0]?.types }}
-      </span>
-    </div>
-    <table class="table" *ngIf="showDetails === i">
-      <tr>
-        <td>شناسه</td>
-        <td>پرسش</td>
-        <td>امتیاز</td>
-        <td>Score</td>
-        <td>گروه</td>
-        <td>تاریخ</td>
-      </tr>
-      <tr *ngFor="let item of group.items; let j = index">
-        <td>{{ j + 1 }}</td>
-        <td>{{ item.title }}</td>
-        <td>{{ item.score }}</td>
-        <td>{{ item.ratescore }}</td>
-        <td>{{ item.groups }}</td>
-        <td>{{ item.datetime }}</td>
-      </tr>
-    </table>
-  </ng-container>
 </div>
 
 <div class="modals text-center" *ngIf="modalDel">
