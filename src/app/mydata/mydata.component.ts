@@ -221,9 +221,11 @@ export class MydataComponent implements OnInit {
           tell,
           items,
         }));
-        console.log(this.groupedData);
         setTimeout(() => {
           this.loadQ = false;
+          this.groupedData = this.groupedData.sort(
+            (a: any, b: any) => Number(b.items[0].id) - Number(a.items[0].id),
+          );
         }, 300);
       });
   }

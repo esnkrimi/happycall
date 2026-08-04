@@ -269,12 +269,30 @@ export class InputDataComponent implements OnInit {
       window.location.reload();
     });
   }
+  changeResultText(result: any, item: any) {
+    this.handle++;
+    this.score = this.formSuggest.get('modelText')?.value;
+    const tell = this.formInput.get('tell')?.value;
+    const userID = this.localStorage.getItem('opId');
+    this.resultTotal = this.resultTotal.filter(
+      (x: any) => x.qsid !== item.qsid,
+    );
+    this.resultTotal.push({
+      ...item,
+      score: this.score,
+      userid: userID,
+      tell: tell,
+      ratescore: Number(this.score) * Number(item.rate),
+    });
+  }
   changeResult(result: any, item: any) {
     this.handle++;
     this.score = result?.target?.value;
     const tell = this.formInput.get('tell')?.value;
     const userID = this.localStorage.getItem('opId');
-    this.resultTotal = this.resultTotal.filter((x: any) => x.id !== item.id);
+    this.resultTotal = this.resultTotal.filter(
+      (x: any) => x.qsid !== item.qsid,
+    );
     this.resultTotal.push({
       ...item,
       score: this.score,

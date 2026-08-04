@@ -8,7 +8,6 @@ export class ServiceService {
   userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
   constructor(private http: HttpClient) {}
   login(user: any, pass: any) {
-    console.log(`${this.userBase}1&username=${user}&password=${pass}`);
     return this.http.get(`${this.userBase}1&username=${user}&password=${pass}`);
   }
 }

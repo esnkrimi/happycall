@@ -43,7 +43,7 @@
                   </h5>
                 </div>
                 <select
-                  [id]="item.id"
+                  [id]="item.qsid"
                   *ngIf="item.model === ''"
                   (change)="changeResult($event, item)"
                 >
@@ -65,12 +65,12 @@
 
                 <div *ngIf="item.model === 'text'">
                   <form [formGroup]="formSuggest">
-                    <input
-                      formControlName="modelText"
-                      (change)="changeResult($event, item)"
-                      [id]="item.id"
-                    />
-                    <button mat-raised-button [disabled]="formSuggest.invalid">
+                    <input formControlName="modelText" [id]="item.qsid" />
+                    <button
+                      (click)="changeResultText('', item)"
+                      mat-raised-button
+                      [disabled]="formSuggest.invalid"
+                    >
                       تایید
                     </button>
                   </form>

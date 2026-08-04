@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   };
   constructor(
     private publicService: PublicService,
-    private route: ActivatedRoute,
+    private router: Router,
     private localStorage: LocalStorageService,
   ) {}
   activeProgress(handle: boolean) {}
@@ -48,6 +48,9 @@ export class AppComponent implements OnInit {
     this.localStorage.setItem('opfamily', '');
     this.localStorage.setItem('opType', '');
     this.localStorage.clear();
-    window.location.reload();
+    this.router.navigate(['/auth']);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   }
 }
