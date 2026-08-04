@@ -64,6 +64,7 @@
           لایه
           {{ user.level }}</span
         >
+        <span *ngIf="user.opId === '1'">- مدیر ارشد </span>
       </p>
       <p>
         <span> آدرس :{{ user.address }}</span>

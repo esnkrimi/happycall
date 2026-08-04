@@ -8,7 +8,7 @@
     ></mat-progress-bar>
   </div>
   <br /><br />
-  <form [formGroup]="formInput">
+  <form [formGroup]="formInput" *ngIf="!loadQ">
     <div *ngIf="handle === 0">
       <label> شماره ثابت سرویس مشترک</label>
       <input formControlName="tell" type="tel" />

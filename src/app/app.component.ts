@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
     this.user.family = this.localStorage.getItem('opname');
     this.user.level = this.localStorage.getItem('level');
     this.user.opType = this.localStorage.getItem('opType');
+    this.user.opId = this.localStorage.getItem('opId');
     this.user.tell = this.localStorage.getItem('tell');
     this.user.address = this.localStorage.getItem('address');
   }

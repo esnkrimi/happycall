@@ -131,9 +131,17 @@ export class MydataComponent implements OnInit {
 
     FileSaver.saveAs(data, 'Report.xlsx');
   }
+  user: any;
+  fetchUser() {
+    this.user = {
+      name: this.localStorage.getItem('opname'),
+      family: this.localStorage.getItem('opfamily'),
+    };
+  }
   ngOnInit(): void {
     this.fetchMyFailures();
     this.listenTofilterName();
+    this.fetchUser();
   }
   listenTofilterName() {
     this.filterName.get('name')?.valueChanges.subscribe((res) => {
@@ -213,7 +221,7 @@ export class MydataComponent implements OnInit {
           tell,
           items,
         }));
-
+        console.log(this.groupedData);
         setTimeout(() => {
           this.loadQ = false;
         }, 300);

@@ -4,117 +4,159 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 
-function fetchQ($con){
-  $sql = "SELECT  * from questions";
-  if ($result=$con->QUERY_RUN($con,$sql)	){
+function fetchQ($con)
+{
+  $type = $_GET['type'];
+  $level = $_GET['level'];
+  if (strcmp($type, 'خرابی') == 0)
+    $sqlAd = '';
+  else
+    $sqlAd = "and  type<>'خرابی'";
+  $sql = "SELECT  * from questions where id>0  $sqlAd and level=$level"; //echo $sql;
+  if ($result = $con->QUERY_RUN($con, $sql)) {
     $resultArray = array();
-   while($row = $result->fetch_object()){
-    array_push($resultArray, $row);    
-   }
-    $t=json_encode($resultArray);
-     echo $t;
-  } 
-}
-
-function edit($con){
-$data=$_GET['formInput'];
-$data = json_decode($data, true); 
-$id=$_GET['fid'];
-$opId = $data['opId'];
-$tell = $data['tell'];
-$typehc = $data['typehc'];
-$datetime = $data['datetime'];
-$result = $data['result'];
-$opId = $data['opId'];
-$resultunsatisfying = $data['resultunsatisfying'];
-$repairDateTime = $data['repairDateTime'];
-$sql = "update failure set 
-  tell='$tell', typehc='$typehc',result='$result' ,resultunsatisfying='$resultunsatisfying' 
-  where
-  id=$id";
-$result=$con->QUERY_RUN($con,$sql);
-  echo('[{"commited":"1"}]');
-}
-
-
-
-
-function delete($con){
-  $datetime=$_GET['datetime'];
-  $userid=$_GET['userid'];
-  $tell=$_GET['tell'];
-  $sql = "delete  from failure where tell='$tell' and datetime='$datetime' and userid='$userid'";
-  if ($result=$con->QUERY_RUN($con,$sql)	){
-        echo('[{"commited":"1"}]');
+    while ($row = $result->fetch_object()) {
+      array_push($resultArray, $row);
+    }
+    $t = json_encode($resultArray);
+    echo $t;
   }
 }
 
-function fetchMyFailures($con){
-  $id=$_GET['userid'];
-  $sql = "  SELECT distinct userid,tell,datetime from failure  left join questions on   questions.id=failure.qid and  userid='1' order by failure.id desc";//echo $sql;
-  if ($result=$con->QUERY_RUN($con,$sql)	){
+function edit($con)
+{
+  $data = $_GET['formInput'];
+  $data = json_decode($data, true);
+  $id = $_GET['fid'];
+  $opId = $data['opId'];
+  $tell = $data['tell'];
+  $typehc = $data['typehc'];
+  $datetime = $data['datetime'];
+  $result = $data['result'];
+  $opId = $data['opId'];
+  $resultunsatisfying = $data['resultunsatisfying'];
+  $repairDateTime = $data['repairDateTime'];
+  $sql = "update failure set 
+  tell='$tell', typehc='$typehc',result='$result' ,resultunsatisfying='$resultunsatisfying' 
+  where
+  id=$id";
+  $result = $con->QUERY_RUN($con, $sql);
+  echo ('[{"commited":"1"}]');
+}
+
+
+
+
+function delete($con)
+{
+  $datetime = $_GET['datetime'];
+  $userid = $_GET['userid'];
+  $tell = $_GET['tell'];
+  $sql = "delete  from failure where tell='$tell' and datetime='$datetime' and userid='$userid'";
+  if ($result = $con->QUERY_RUN($con, $sql)) {
+    echo ('[{"commited":"1"}]');
+  }
+}
+
+function fetchMyFailures($con)
+{
+  $id = $_GET['userid'];
+  if ($id == 1)
+    $sql = "SELECT * from failure , questions where failure.qid=questions.id ";
+  else
+    $sql = "SELECT * from failure , questions where failure.qid=questions.id and failure.userid = $id";
+  //echo $sql;
+
+  if ($result = $con->QUERY_RUN($con, $sql)) {
     $resultArray = array();
-   while($row = $result->fetch_object()){
-    array_push($resultArray, $row);    
-   }
-    $t=json_encode($resultArray);
-     echo $t;
-  } 
+    while ($row = $result->fetch_object()) {
+      $userid = $row->userid;
+      $row->userinfo = fetchUserByID($con, $userid);
+      array_push($resultArray, $row);
+    }
+    $t = json_encode($resultArray);
+    echo $t;
+  }
+}
+function fetchUserByID($con, $userid)
+{
+  $sql = "SELECT * from user where id=$userid";//echo $sql;
+  if ($result = $con->QUERY_RUN($con, $sql)) {
+    $resultArray = array();
+    while ($row = $result->fetch_object()) {
+      array_push($resultArray, $row);
+
+
+    }
+    return $resultArray;
+  }
+}
+
+function addRowFactor($con)
+{
+  $count = $_GET['count'];
+  $price = $_GET['price'];
+  $title = $_GET['title'];
+  $cid = $_GET['cid'];
+  $factorrowId = $con->GET_MAX_COL('factorrow', 'id');
+  $result = $con->QUERY_RUN($con, $sql);
+  $sql = "insert into factorrow values ($factorrowId,'$title',$price,$count,$cid)";
+  echo ('[{"commited":"1"}]');
 }
 
 
-function addRowFactor($con){
-  $count=$_GET['count'];
-  $price=$_GET['price'];
-  $title=$_GET['title'];
-  $cid=$_GET['cid'];
-  $factorrowId=$con->GET_MAX_COL('factorrow','id');
-  $result=$con->QUERY_RUN($con,$sql);
-  $sql = "insert into factorrow values ($factorrowId,'$title',$price,$count,$cid)";echo $sql;
-  echo('[{"commited":"1"}]');
-}
+function submitFailure($con)
+{
+  $data = $_POST['formInput'];
+  $type = $_GET['type'];
 
+  $data = json_decode($data, true);
 
-function submitFailure($con){
-$data=$_POST['formInput'];
-$data = json_decode($data, true); 
-
-foreach ($data as $row) {
+  foreach ($data as $row) {
 
     $id = $con->GET_MAX_COL('failure', 'id');
-$datetime = date("Y-m-d H:i:s");
+    $date = new DateTime();
 
+    $fmt = new IntlDateFormatter(
+      'fa_IR@calendar=persian',
+      IntlDateFormatter::FULL,
+      IntlDateFormatter::MEDIUM,
+      'Asia/Tehran',
+      IntlDateFormatter::TRADITIONAL
+    );
+    $dat = $fmt->format($date);
     $sql = "INSERT INTO failure
-    (id, userid, tell, datetime, score, ratescore,qid)
+    (id, userid, tell, datetime, score, ratescore,qid,types)
     VALUES (
         $id,
         '{$row['userid']}',
         '{$row['tell']}',
-        '$datetime',
+        '$dat',
         '{$row['score']}',
         '{$row['ratescore']}',
-        '{$row['id']}'
+        '{$row['id']}',
+        '$type'
     )";
-  $result=$con->QUERY_RUN($con,$sql);
-}
-  echo('[{"commited":"1"}]');
+    $result = $con->QUERY_RUN($con, $sql);
+  }
+  echo ('[{"commited":"1"}]');
 
 }
 
-function login($con){
-  $username=$_GET['username'];
-  $password=$_GET['password'];
+function login($con)
+{
+  $username = $_GET['username'];
+  $password = $_GET['password'];
   $sql = "SELECT  id,level,name,family,type,tell,address from user where username='$username' and password='$password' ";
-  if ($result=$con->QUERY_RUN($con,$sql)	){
+  if ($result = $con->QUERY_RUN($con, $sql)) {
     $resultArray = array();
-   while($row = $result->fetch_object()){
-    array_push($resultArray, $row);    
-   }
-    $t=json_encode($resultArray);
-     echo $t;
-  } 
+    while ($row = $result->fetch_object()) {
+      array_push($resultArray, $row);
+    }
+    $t = json_encode($resultArray);
+    echo $t;
+  }
 }
 
 
 ?>
-  

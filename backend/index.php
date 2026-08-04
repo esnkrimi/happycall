@@ -26,6 +26,8 @@ if ($id == 4)
     edit($con);
 if ($id == 5)
     delete($con);
+if ($id == 6)
+    fetchQ($con);
 
 $link->close();
 ?>

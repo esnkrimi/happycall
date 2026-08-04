@@ -32,6 +32,7 @@ export class ServiceService {
   }
 
   fetchMyFailures(userid: any) {
+    console.log(`${this.userBase}3&userid=${userid}`);
     return this.http.get(`${this.userBase}3&userid=${userid}`);
   }
 }
