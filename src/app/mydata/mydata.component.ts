@@ -226,6 +226,13 @@ export class MydataComponent implements OnInit {
           this.groupedData = this.groupedData.sort(
             (a: any, b: any) => Number(b.items[0].id) - Number(a.items[0].id),
           );
+          this.groupedData = this.groupedData.map((group: any) => ({
+            ...group,
+            totalRateScore: group.items.reduce(
+              (sum: number, item: any) => sum + Number(item.ratescore),
+              0,
+            ),
+          }));
         }, 300);
       });
   }

@@ -75,6 +75,19 @@
                     </button>
                   </form>
                 </div>
+
+                <div *ngIf="item.model === 'text2'">
+                  <form [formGroup]="formSuggest2">
+                    <input formControlName="modelText2" [id]="item.qsid" />
+                    <button
+                      (click)="changeResultText2('', item)"
+                      mat-raised-button
+                      [disabled]="formSuggest.invalid"
+                    >
+                      تایید
+                    </button>
+                  </form>
+                </div>
               </div>
             </ng-container>
           </ng-container>
