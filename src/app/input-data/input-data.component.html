@@ -12,6 +12,17 @@
     <div *ngIf="handle === 0">
       <label> شماره ثابت سرویس مشترک</label>
       <input formControlName="tell" type="tel" />
+      <div class="mt-4 border mb-4 p-2">
+        <p>مشخصات پیمانکار</p>
+        <div>
+          <label>QRCODE</label>
+          <input formControlName="pey_qrcode" type="text" />
+        </div>
+        <div>
+          <label>نام و نام خانوادگی</label>
+          <input formControlName="pey_name" type="text" />
+        </div>
+      </div>
       <button
         [disabled]="formInput.invalid"
         (click)="handle = handle + 1"

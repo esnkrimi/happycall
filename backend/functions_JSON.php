@@ -126,7 +126,7 @@ $fmt = new IntlDateFormatter(
 );
 $dat=$fmt->format($date);
     $sql = "INSERT INTO failure
-    (id, userid, tell, datetime, score, ratescore,qid,types)
+    (id, userid, tell, datetime, score, ratescore,qid,types,pey_qrcode,pey_name)
     VALUES (
         $id,
         '{$row['userid']}',
@@ -135,7 +135,9 @@ $dat=$fmt->format($date);
         '{$row['score']}',
         '{$row['ratescore']}',
         '{$row['qsid']}',
-        '$type'
+        '$type',
+        '{$row['pey_qrcode']}',
+        '{$row['pey_name']}'
     )";
   $result=$con->QUERY_RUN($con,$sql);
 }

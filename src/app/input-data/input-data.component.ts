@@ -152,6 +152,8 @@ export class InputDataComponent implements OnInit {
     opname: new FormControl(''),
     opfamily: new FormControl(''),
     opType: new FormControl(''),
+    pey_qrcode: new FormControl(''),
+    pey_name: new FormControl(''),
     typehc: new FormControl(''),
     datetime: new FormControl(''),
     result: new FormControl(''),
@@ -276,6 +278,8 @@ export class InputDataComponent implements OnInit {
     this.handle++;
     this.score = this.formSuggest.get('modelText')?.value;
     const tell = this.formInput.get('tell')?.value;
+    const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
+    const pey_name = this.formInput.get('pey_name')?.value;
     const userID = this.localStorage.getItem('opId');
     this.resultTotal = this.resultTotal.filter(
       (x: any) => x.qsid !== item.qsid,
@@ -285,6 +289,8 @@ export class InputDataComponent implements OnInit {
       score: this.score,
       userid: userID,
       tell: tell,
+      pey_qrcode: pey_qrcode,
+      pey_name: pey_name,
       ratescore: Number(this.score) * Number(item.rate),
     });
   }
@@ -292,6 +298,8 @@ export class InputDataComponent implements OnInit {
     this.handle++;
     this.score = this.formSuggest2.get('modelText2')?.value;
     const tell = this.formInput.get('tell')?.value;
+    const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
+    const pey_name = this.formInput.get('pey_name')?.value;
     const userID = this.localStorage.getItem('opId');
     this.resultTotal = this.resultTotal.filter(
       (x: any) => x.qsid !== item.qsid,
@@ -301,6 +309,8 @@ export class InputDataComponent implements OnInit {
       score: this.score,
       userid: userID,
       tell: tell,
+      pey_qrcode: pey_qrcode,
+      pey_name: pey_name,
       ratescore: Number(this.score) * Number(item.rate),
     });
   }
@@ -308,6 +318,8 @@ export class InputDataComponent implements OnInit {
     this.handle++;
     this.score = result?.target?.value;
     const tell = this.formInput.get('tell')?.value;
+    const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
+    const pey_name = this.formInput.get('pey_name')?.value;
     const userID = this.localStorage.getItem('opId');
     this.resultTotal = this.resultTotal.filter(
       (x: any) => x.qsid !== item.qsid,
@@ -317,6 +329,8 @@ export class InputDataComponent implements OnInit {
       score: this.score,
       userid: userID,
       tell: tell,
+      pey_qrcode: pey_qrcode,
+      pey_name: pey_name,
       ratescore: Number(this.score) * Number(item.rate),
     });
   }
