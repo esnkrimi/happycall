@@ -9,10 +9,12 @@ $tell=$_GET['tell'];
 $user_id=$_GET['userid'];
 $pey_name=$_GET['pey_name'];
 $pey_qrcode=$_GET['pey_qrcode'];
+$ticket_number=$_GET['ticket_number'];
+$ticket_date=$_GET['ticket_date'];
 $id = $con->GET_MAX_COL('failure', 'id');
 $sql = "INSERT INTO failure
-(id, userid, tell, datetime, score, ratescore,qid,modelresult,types,pey_qrcode,pey_name,refrence)
-VALUES ($id,$user_id,$tell,'','','',0,'','','$pey_qrcode','$pey_name',0)";
+(id, userid, tell, datetime, score, ratescore,qid,modelresult,types,pey_qrcode,pey_name,refrence,ticket_number,ticket_date)
+VALUES ($id,$user_id,$tell,'','','',0,'','','$pey_qrcode','$pey_name',0,'$ticket_number','$ticket_date')";
 //echo $sql;
 $result=$con->QUERY_RUN($con,$sql);
 echo('[{"commited":"1"}]');
@@ -98,6 +100,7 @@ ORDER BY failure.id DESC";
 }
 
 function fetchDontRefrence($con){
+    
 $id=$_GET['userid'];
 if($id==1)
 $sql="
@@ -151,6 +154,9 @@ function addRowFactor($con){
 
 
 function submitFailure($con){
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+
 $data=$_POST['formInput'];
 $type=$_GET['type'];
 $data = json_decode($data, true); 
@@ -158,18 +164,8 @@ foreach ($data as $row) {
 $id = $con->GET_MAX_COL('failure', 'id');
 $date = new DateTime();
 $date=$date->format('Y-m-d H:i:s');
-/*
-$fmt = new IntlDateFormatter(
-    'fa_IR@calendar=persian',
-    IntlDateFormatter::FULL,
-    IntlDateFormatter::MEDIUM,
-    'Asia/Tehran',
-    IntlDateFormatter::TRADITIONAL
-);
-$dat=$fmt->format($date);
-*/
     $sql = "INSERT INTO failure
-    (id, userid, tell, datetime, score, ratescore,qid,types,pey_qrcode,pey_name,refrence)
+    (id, userid, tell, datetime, score, ratescore,qid,types,pey_qrcode,pey_name,refrence,ticket_number,ticket_date,modelresult)
     VALUES (
         $id,
         '{$row['userid']}',
@@ -180,7 +176,11 @@ $dat=$fmt->format($date);
         '{$row['qsid']}',
         '$type',
         '{$row['pey_qrcode']}',
-        '{$row['pey_name']}',1
+        '{$row['pey_name']}',1,
+        '{$row['ticket_number']}',
+        '{$row['ticket_date']}',
+        ''
+        
     )";
   $result=$con->QUERY_RUN($con,$sql);
 }

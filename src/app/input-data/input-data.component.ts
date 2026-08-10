@@ -150,9 +150,17 @@ export class InputDataComponent implements OnInit {
     const pey_name = this.formInput.get('pey_name')?.value;
     const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
     const userID = this.localStorage.getItem('opId');
-
+    const ticket_number = this.formInput.get('ticket_number')?.value;
+    const ticket_date = this.formInput.get('ticket_date')?.value;
     this.serviceService
-      .updateDontRefre(tell, pey_name, pey_qrcode, userID)
+      .updateDontRefre(
+        tell,
+        pey_name,
+        pey_qrcode,
+        userID,
+        ticket_number,
+        ticket_date,
+      )
       .subscribe((res) => {
         alert('با موفقیت ثبت شد');
         window.location.reload();
@@ -176,6 +184,8 @@ export class InputDataComponent implements OnInit {
     opType: new FormControl(''),
     pey_qrcode: new FormControl(''),
     pey_name: new FormControl(''),
+    ticket_date: new FormControl(''),
+    ticket_number: new FormControl(''),
     typehc: new FormControl(''),
     datetime: new FormControl(''),
     result: new FormControl(''),
@@ -205,6 +215,7 @@ export class InputDataComponent implements OnInit {
 
   async fetchMyQ(type: any) {
     const userLevel: any = this.localStorage.getItem('level');
+    console.log(userLevel);
     this.serviceService
       .fetchMyQ(type)
       .pipe(
@@ -306,6 +317,8 @@ export class InputDataComponent implements OnInit {
     const tell = this.formInput.get('tell')?.value;
     const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
     const pey_name = this.formInput.get('pey_name')?.value;
+    const ticket_number = this.formInput.get('ticket_number')?.value;
+    const ticket_date = this.formInput.get('ticket_date')?.value;
     const userID = this.localStorage.getItem('opId');
     this.resultTotal = this.resultTotal.filter(
       (x: any) => x.qsid !== item.qsid,
@@ -317,6 +330,8 @@ export class InputDataComponent implements OnInit {
       tell: tell,
       pey_qrcode: pey_qrcode,
       pey_name: pey_name,
+      ticket_number: ticket_number,
+      ticket_date: ticket_date,
       ratescore: Number(this.score) * Number(item.rate),
     });
   }
@@ -326,6 +341,8 @@ export class InputDataComponent implements OnInit {
     const tell = this.formInput.get('tell')?.value;
     const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
     const pey_name = this.formInput.get('pey_name')?.value;
+    const ticket_number = this.formInput.get('ticket_number')?.value;
+    const ticket_date = this.formInput.get('ticket_date')?.value;
     const userID = this.localStorage.getItem('opId');
     this.resultTotal = this.resultTotal.filter(
       (x: any) => x.qsid !== item.qsid,
@@ -337,6 +354,8 @@ export class InputDataComponent implements OnInit {
       tell: tell,
       pey_qrcode: pey_qrcode,
       pey_name: pey_name,
+      ticket_date: ticket_date,
+      ticket_number: ticket_number,
       ratescore: Number(this.score) * Number(item.rate),
     });
   }
@@ -346,6 +365,8 @@ export class InputDataComponent implements OnInit {
     const tell = this.formInput.get('tell')?.value;
     const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
     const pey_name = this.formInput.get('pey_name')?.value;
+    const ticket_number = this.formInput.get('ticket_number')?.value;
+    const ticket_date = this.formInput.get('ticket_date')?.value;
     const userID = this.localStorage.getItem('opId');
     this.resultTotal = this.resultTotal.filter(
       (x: any) => x.qsid !== item.qsid,
@@ -357,6 +378,8 @@ export class InputDataComponent implements OnInit {
       tell: tell,
       pey_qrcode: pey_qrcode,
       pey_name: pey_name,
+      ticket_number: ticket_number,
+      ticket_date: ticket_date,
       ratescore: Number(this.score) * Number(item.rate),
     });
   }

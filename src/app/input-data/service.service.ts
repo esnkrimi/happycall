@@ -19,9 +19,16 @@ export class ServiceService {
     );
   }
 
-  updateDontRefre(tell: any, pey_name: any, pey_qrcode: any, userID: any) {
+  updateDontRefre(
+    tell: any,
+    pey_name: any,
+    pey_qrcode: any,
+    userID: any,
+    ticket_number: any,
+    ticket_date: any,
+  ) {
     return this.http.get(
-      `${this.userBase}7&userid=${userID}&pey_name=${pey_name}&pey_qrcode=${pey_qrcode}&tell=${tell}`,
+      `${this.userBase}7&userid=${userID}&pey_name=${pey_name}&pey_qrcode=${pey_qrcode}&ticket_date=${ticket_date}&ticket_number=${ticket_number}&tell=${tell}`,
     );
   }
 
@@ -32,7 +39,7 @@ export class ServiceService {
   }
 
   fetchMyQ(type: any) {
-    const level = localStorage.getItem('opId');
+    const level = localStorage.getItem('level');
     return this.http.get(`${this.userBase}6&type=${type}&level=${level}`);
   }
 

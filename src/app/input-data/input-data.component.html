@@ -19,7 +19,7 @@
           <mat-slide-toggle (change)="isOnChange($event)"> </mat-slide-toggle>
         </div>
         <div>
-          <label>QRCODE</label>
+          <label>شماره همراه </label>
           <input formControlName="pey_qrcode" type="text" />
         </div>
         <div>
@@ -27,6 +27,19 @@
           <input formControlName="pey_name" type="text" />
         </div>
       </div>
+
+      <div class="mt-4 border mb-4 p-2">
+        <p>مشخصات تیکت</p>
+        <div class="m-2">
+          <label>شماره تیکت</label>
+          <input formControlName="ticket_number" type="text" />
+        </div>
+        <div>
+          <label>تاریخ تیکت </label>
+          <input formControlName="ticket_date" type="text" />
+        </div>
+      </div>
+
       <button *ngIf="isOn" (click)="updateDontRefre()" mat-raised-button>
         بروزرسانی
       </button>
