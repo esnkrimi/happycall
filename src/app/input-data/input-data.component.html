@@ -14,6 +14,10 @@
       <input formControlName="tell" type="tel" />
       <div class="mt-4 border mb-4 p-2">
         <p>مشخصات پیمانکار</p>
+        <div class="m-2">
+          <label>اصلا کسی مراجعه نکرده است</label>
+          <mat-slide-toggle (change)="isOnChange($event)"> </mat-slide-toggle>
+        </div>
         <div>
           <label>QRCODE</label>
           <input formControlName="pey_qrcode" type="text" />
@@ -23,7 +27,11 @@
           <input formControlName="pey_name" type="text" />
         </div>
       </div>
+      <button *ngIf="isOn" (click)="updateDontRefre()" mat-raised-button>
+        بروزرسانی
+      </button>
       <button
+        *ngIf="!isOn"
         [disabled]="formInput.invalid"
         (click)="handle = handle + 1"
         mat-raised-button

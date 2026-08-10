@@ -37,6 +37,8 @@ export class InputDataComponent implements OnInit {
       score: 1,
     },
   ];
+  isOn = false;
+
   showDetails = -1;
   handle = 0;
   formSuggest = new FormGroup({
@@ -143,9 +145,29 @@ export class InputDataComponent implements OnInit {
       this.filteredName = res;
     });
   }
+  updateDontRefre() {
+    const tell = this.formInput.get('tell')?.value;
+    const pey_name = this.formInput.get('pey_name')?.value;
+    const pey_qrcode = this.formInput.get('pey_qrcode')?.value;
+    const userID = this.localStorage.getItem('opId');
+
+    this.serviceService
+      .updateDontRefre(tell, pey_name, pey_qrcode, userID)
+      .subscribe((res) => {
+        alert('با موفقیت ثبت شد');
+        window.location.reload();
+      });
+  }
   filterCheck(item: string, item2: string) {
     const result = item.includes(item2) || item2.includes(item) || item2 === '';
     return result;
+  }
+  isOnChange(event: any) {
+    if (event.checked) {
+      this.isOn = true;
+    } else {
+      this.isOn = false;
+    }
   }
   formInput = new FormGroup({
     tell: new FormControl('', [Validators.required, Validators.minLength(5)]),
@@ -175,6 +197,10 @@ export class InputDataComponent implements OnInit {
     this.formInput
       .get('resultunsatisfying')
       ?.setValue(JSON.stringify(this.selectedUnsatisfying));
+  }
+
+  toggle(): void {
+    this.isOn = !this.isOn;
   }
 
   async fetchMyQ(type: any) {

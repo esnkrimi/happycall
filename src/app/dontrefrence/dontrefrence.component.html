@@ -1,0 +1,24 @@
+<table class="table">
+  <tr>
+    <td>شماره مشترک</td>
+    <td>نام پیمانکار</td>
+    <td>QRCODE</td>
+    <td>کاربر ثبت کننده</td>
+  </tr>
+  <tr *ngFor="let item of userFailure; let j = index">
+    <td>{{ item.tell }}</td>
+    <td>{{ item.pey_name }}</td>
+    <td>{{ item.pey_qrcode }}</td>
+    <td>
+      {{ item.userinfo[0].name }}
+      {{ item.userinfo[0].family }}
+      <p>
+        کاربر مرحله
+        {{ item.userinfo[0].level }}
+      </p>
+      <p>
+        {{ item.userinfo[0].tell }}
+      </p>
+    </td>
+  </tr>
+</table>

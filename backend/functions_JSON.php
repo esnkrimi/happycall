@@ -4,6 +4,19 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 
+function updateDontRefre($con){
+$tell=$_GET['tell'];
+$user_id=$_GET['userid'];
+$pey_name=$_GET['pey_name'];
+$pey_qrcode=$_GET['pey_qrcode'];
+$id = $con->GET_MAX_COL('failure', 'id');
+$sql = "INSERT INTO failure
+(id, userid, tell, datetime, score, ratescore,qid,modelresult,types,pey_qrcode,pey_name,refrence)
+VALUES ($id,$user_id,$tell,'','','',0,'','','$pey_qrcode','$pey_name',0)";
+//echo $sql;
+$result=$con->QUERY_RUN($con,$sql);
+echo('[{"commited":"1"}]');
+}
 function fetchQ($con){
 $type=$_GET['type'];
 $level=$_GET['level'];
@@ -62,13 +75,14 @@ $sql="
 SELECT *
 FROM failure
 JOIN questions ON failure.qid = questions.qsid
+where refrence=1
 ORDER BY failure.id DESC";
 else
 $sql="
 SELECT *
 FROM failure
 JOIN questions ON failure.qid = questions.qsid
-WHERE failure.userid = $id
+WHERE failure.userid = $id and refrence=1
 ORDER BY failure.id DESC";
 
   if ($result=$con->QUERY_RUN($con,$sql)	){
@@ -82,6 +96,33 @@ ORDER BY failure.id DESC";
      echo $t;
   } 
 }
+
+function fetchDontRefrence($con){
+$id=$_GET['userid'];
+if($id==1)
+$sql="
+SELECT *
+FROM failure
+where refrence=0
+ORDER BY failure.id DESC";
+else
+$sql="
+SELECT *
+FROM failure
+WHERE userid = $id and refrence=0
+ORDER BY failure.id DESC";
+  if ($result=$con->QUERY_RUN($con,$sql)	){
+    $resultArray = array();
+   while($row = $result->fetch_object()){
+       $userid=$row->userid;
+       $row->userinfo=fetchUserByID($con,$userid);
+    array_push($resultArray, $row);    
+   }
+    $t=json_encode($resultArray);
+     echo $t;
+  } 
+}
+
 
 
 function fetchUserByID($con,$userid){
@@ -116,7 +157,8 @@ $data = json_decode($data, true);
 foreach ($data as $row) {
 $id = $con->GET_MAX_COL('failure', 'id');
 $date = new DateTime();
-
+$date=$date->format('Y-m-d H:i:s');
+/*
 $fmt = new IntlDateFormatter(
     'fa_IR@calendar=persian',
     IntlDateFormatter::FULL,
@@ -125,19 +167,20 @@ $fmt = new IntlDateFormatter(
     IntlDateFormatter::TRADITIONAL
 );
 $dat=$fmt->format($date);
+*/
     $sql = "INSERT INTO failure
-    (id, userid, tell, datetime, score, ratescore,qid,types,pey_qrcode,pey_name)
+    (id, userid, tell, datetime, score, ratescore,qid,types,pey_qrcode,pey_name,refrence)
     VALUES (
         $id,
         '{$row['userid']}',
         '{$row['tell']}',
-        '$dat',
+        '$date',
         '{$row['score']}',
         '{$row['ratescore']}',
         '{$row['qsid']}',
         '$type',
         '{$row['pey_qrcode']}',
-        '{$row['pey_name']}'
+        '{$row['pey_name']}',1
     )";
   $result=$con->QUERY_RUN($con,$sql);
 }

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class ServiceService {
+export class DontrefrenceService {
   userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
   constructor(private http: HttpClient) {}
   submitFail(formInput: any, type: any) {
@@ -16,12 +16,6 @@ export class ServiceService {
   delete(item: any) {
     return this.http.get(
       `${this.userBase}5&datetime=${item.datetime}&userid=${item.userid}&tell=${item.tell}`,
-    );
-  }
-
-  updateDontRefre(tell: any, pey_name: any, pey_qrcode: any, userID: any) {
-    return this.http.get(
-      `${this.userBase}7&userid=${userID}&pey_name=${pey_name}&pey_qrcode=${pey_qrcode}&tell=${tell}`,
     );
   }
 
@@ -38,5 +32,8 @@ export class ServiceService {
 
   fetchMyFailures(userid: any) {
     return this.http.get(`${this.userBase}3&userid=${userid}`);
+  }
+  fetchMyDontRefrence(userid: any) {
+    return this.http.get(`${this.userBase}8&userid=${userid}`);
   }
 }

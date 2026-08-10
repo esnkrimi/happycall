@@ -31,7 +31,10 @@
       <button mat-raised-button (click)="exportExcel()">دانلود Excel</button>
     </div>
   </div>
-  <div *ngFor="let group of groupedData; let i = index">
+  <div
+    class="border-4 m-1 p-1"
+    *ngFor="let group of groupedData; let i = index"
+  >
     <ng-container *ngIf="filterCheck(group.tell, filteredName)">
       <div class="card-header p-2 border my-3 rounded">
         <div>
@@ -52,6 +55,23 @@
             مشاهده جزییات
           </span>
         </div>
+        <div class="border m-1 p-1">
+          <div>
+            <span class="text-muted opacity-75 text-small">
+              پیمانکار مراجعه کننده به مشترک :
+            </span>
+          </div>
+          <div>
+            <span class="opacity-75 text-small">
+              {{ group["items"][0]?.pey_name }}
+            </span>
+            <span class="opacity-75 text-small">
+              QRCODE :
+              {{ group["items"][0]?.pey_qrcode }}
+            </span>
+          </div>
+        </div>
+
         <div
           class="card-header p-2"
           (click)="showDetails = showDetails == i ? -1 : i"
@@ -65,7 +85,7 @@
 
           <span class="text-muted opacity-75 text-small">
             در تاریخ
-            {{ group["items"][0]?.datetime }}
+            {{ group["items"][0]?.datetime | jalaliDate: "jYYYY/jMM/jDD" }}
           </span>
         </div>
       </div>
@@ -83,7 +103,8 @@
           <td>{{ item.score }}</td>
           <td>{{ item.ratescore }}</td>
           <td>{{ item.groups }}</td>
-          <td>{{ item.datetime }}</td>
+
+          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
         </tr>
       </table>
     </ng-container>
@@ -108,6 +129,9 @@
           <td>نوع</td>
           <td>ثبت کننده</td>
           <td>مرحله</td>
+          <td>پیمانکار مراجعه کننده به مشترک</td>
+          <td>QRCODE مراجعه کننده به مشترک</td>
+          <td>امتیاز کل</td>
         </tr>
         <tr *ngFor="let item of group.items; let j = index">
           <td>{{ group.tell }}</td>
@@ -115,7 +139,7 @@
           <td>{{ item.score }}</td>
           <td>{{ item.ratescore }}</td>
           <td>{{ item.groups }}</td>
-          <td>{{ item.datetime }}</td>
+          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
           <td>{{ group["items"][0]?.types }}</td>
           <td>
             {{ group["items"][0]?.userinfo[0]?.name }} -{{
@@ -123,6 +147,15 @@
             }}
           </td>
           <td>لایه {{ group["items"][0]?.level }}</td>
+          <td>
+            {{ group["items"][0]?.pey_name }}
+          </td>
+          <td>
+            {{ group["items"][0]?.pey_qrcode }}
+          </td>
+          <td>
+            {{ group.totalRateScore }}
+          </td>
         </tr>
       </table>
     </ng-container>

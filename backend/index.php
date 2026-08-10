@@ -28,6 +28,11 @@ if ($id == 5)
     delete($con);
 if ($id == 6)
     fetchQ($con);
+if ($id == 7)
+    updateDontRefre($con);
+if ($id == 8)
+    fetchDontRefrence($con);
+
 
 $link->close();
 ?>

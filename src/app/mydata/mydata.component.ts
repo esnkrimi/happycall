@@ -8,6 +8,8 @@ import { map, tap } from 'rxjs';
 import { PublicService } from '../service.service';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import * as moment from 'jalali-moment';
+
 @Component({
   selector: 'app-mydata',
   templateUrl: './mydata.component.html',
@@ -302,6 +304,9 @@ export class MydataComponent implements OnInit {
   getType() {
     const res = this.formInput.get('typehc')?.value;
     return res;
+  }
+  shamsi(date: any) {
+    return date.format('jYYYY/jMM/jDD HH:mm:ss');
   }
   changeResultEdit(result: any) {
     this.unsatisfyingEdit =

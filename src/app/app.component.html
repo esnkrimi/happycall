@@ -39,6 +39,18 @@
 
     <div
       (click)="activeProgress(true)"
+      [routerLink]="'/refrence'"
+      [class.selected-div]="pathFull === 'refrence'"
+      class="hover-color w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span>مراجعه نشده ها</span>
+    </div>
+
+    <div
+      (click)="activeProgress(true)"
       [routerLink]="'/inputData'"
       [class.selected-div]="
         pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'

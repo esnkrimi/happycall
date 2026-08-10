@@ -17,6 +17,9 @@ import { MatInputModule } from '@angular/material/input';
 import { InputDataComponent } from './input-data/input-data.component';
 import { LoginComponent } from './login/login.component';
 import { MydataComponent } from './mydata/mydata.component';
+import { JalaliDatePipe } from './shared/pipes/jalali-date.pipe';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DontrefrenceComponent } from './dontrefrence/dontrefrence.component';
 
 export const DEVICE_WIDTH = new InjectionToken<string>('DEVICE_WIDTH');
 export const KONVA = new InjectionToken<string>('konva');
@@ -33,6 +36,8 @@ registerLocaleData(localeFa);
     AppComponent,
     MydataComponent,
     InputDataComponent,
+    DontrefrenceComponent,
+    JalaliDatePipe,
     LoginComponent,
   ],
   imports: [
@@ -42,6 +47,7 @@ registerLocaleData(localeFa);
     CommonModule,
     AppRoutingModule,
     MatButtonModule,
+    MatSlideToggleModule,
     MatInputModule,
     MatProgressBarModule,
     HttpClientModule,

@@ -4,6 +4,7 @@ import { InputDataComponent } from './input-data/input-data.component';
 import { LoginComponent } from './login/login.component';
 import { authGuard } from './auth.guard';
 import { MydataComponent } from './mydata/mydata.component';
+import { DontrefrenceComponent } from './dontrefrence/dontrefrence.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,10 @@ export const routes: Routes = [
   {
     path: 'mydata',
     component: MydataComponent,
+  },
+  {
+    path: 'refrence',
+    component: DontrefrenceComponent,
   },
 ];
 
