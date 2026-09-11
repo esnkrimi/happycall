@@ -31,22 +31,14 @@
       <button mat-raised-button (click)="exportExcel()">دانلود Excel</button>
     </div>
   </div>
-  <div
-    class="border-4 m-1 p-1"
-    *ngFor="let group of groupedData; let i = index"
-  >
+  <div class="m-1 p-1" *ngFor="let group of groupedData; let i = index">
     <ng-container *ngIf="filterCheck(group.tell, filteredName)">
       <div class="card-header p-2 border my-3 rounded">
         <div>
           <span class="text-muted opacity-75">
             {{ group.tell }}
           </span>
-          <span class="text-muted opacity-75 text-small">
-            ({{ group["items"][0]?.types }})
-          </span>
-          <span class="text-muted opacity-75 text-small">
-            (لایه {{ group["items"][0]?.level }})
-          </span>
+
           <span
             class="text-small"
             (click)="showDetails = showDetails == i ? -1 : i"
@@ -55,65 +47,44 @@
             مشاهده جزییات
           </span>
         </div>
-        <div class="border m-1 p-1">
-          <div>
-            <span class="text-muted opacity-75 text-small">
-              پیمانکار مراجعه کننده به مشترک :
-            </span>
-          </div>
-          <div>
-            <span class="opacity-75 text-small">
-              {{ group["items"][0]?.pey_name }}
-            </span>
-            <span class="opacity-75 text-small">
-              شماره همراه :
-              {{ group["items"][0]?.pey_qrcode }}
-            </span>
-          </div>
-        </div>
-
-        <div
-          class="card-header p-2"
-          (click)="showDetails = showDetails == i ? -1 : i"
-        >
-          <span class="text-muted opacity-75 text-small">
-            ثبت شده توسط
-            {{ group["items"][0]?.userinfo[0]?.name }} -{{
-              group["items"][0]?.userinfo[0]?.family
-            }}
-          </span>
-
-          <span class="text-muted opacity-75 text-small">
-            در تاریخ
-            {{ group["items"][0]?.datetime | jalaliDate: "jYYYY/jMM/jDD" }}
-          </span>
-        </div>
       </div>
 
       <table class="table" *ngIf="showDetails === i">
         <tr>
           <td>پرسش</td>
-          <td>امتیاز</td>
-          <td>Score</td>
+          <td>نوع</td>
+          <td>نتیجه</td>
           <td>گروه</td>
           <td>تاریخ</td>
+          <td>مراجعه کننده</td>
+          <td>مصاحبه گر</td>
         </tr>
-        <tr *ngFor="let item of group.items; let j = index">
+        <tr
+          [class.opacity-50]="item.layer === '2'"
+          *ngFor="let item of group.items; let j = index"
+        >
           <td>{{ item.title }}</td>
+          <td>{{ item.types }}</td>
           <td>{{ item.score }}</td>
-          <td>{{ item.ratescore }}</td>
-          <td>{{ item.groups }}</td>
+          <td
+            [class.text-primary]="item.layer === '1'"
+            [class.text-danger]="item.layer === '2'"
+            [class.text-success]="item.layer === '3'"
+          >
+            لایه {{ item.layer }}
+          </td>
 
           <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{ item.pey_name }}
+          </td>
+          <td>
+            {{ item.userinfo[0]?.name }}
+            {{ item.userinfo[0]?.family }}
+          </td>
         </tr>
       </table>
     </ng-container>
-    <div class="text-center m-2 p-1">
-      <span class="m-2 p-2"> مجموع امتیازها </span>
-      <span class="m-2 p-2">
-        {{ group.totalRateScore }}
-      </span>
-    </div>
   </div>
 
   <table id="reportTable" style="display: none">
@@ -122,39 +93,29 @@
         <tr>
           <td>مشترک</td>
           <td>پرسش</td>
-          <td>امتیاز</td>
-          <td>Score</td>
-          <td>گروه</td>
+          <td>نتیجه</td>
           <td>تاریخ</td>
           <td>نوع</td>
           <td>ثبت کننده</td>
           <td>مرحله</td>
           <td>پیمانکار مراجعه کننده به مشترک</td>
           <td>شماره همراه مراجعه کننده به مشترک</td>
-          <td>امتیاز کل</td>
         </tr>
         <tr *ngFor="let item of group.items; let j = index">
           <td>{{ group.tell }}</td>
           <td>{{ item.title }}</td>
           <td>{{ item.score }}</td>
-          <td>{{ item.ratescore }}</td>
-          <td>{{ item.groups }}</td>
           <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
-          <td>{{ group["items"][0]?.types }}</td>
+          <td>{{ item.types }}</td>
           <td>
-            {{ group["items"][0]?.userinfo[0]?.name }} -{{
-              group["items"][0]?.userinfo[0]?.family
-            }}
+            {{ item?.userinfo[0]?.name }} -{{ item?.userinfo[0]?.family }}
           </td>
-          <td>لایه {{ group["items"][0]?.level }}</td>
+          <td>لایه {{ item.layer }}</td>
           <td>
-            {{ group["items"][0]?.pey_name }}
+            {{ item?.pey_name }}
           </td>
           <td>
-            {{ group["items"][0]?.pey_qrcode }}
-          </td>
-          <td>
-            {{ group.totalRateScore }}
+            {{ item?.pey_qrcode }}
           </td>
         </tr>
       </table>

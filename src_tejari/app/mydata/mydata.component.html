@@ -1,0 +1,192 @@
+<div class="w-100 loading-bar" *ngIf="loadQ">
+  <mat-progress-bar
+    class="loader"
+    mode="indeterminate"
+    color="accent"
+  ></mat-progress-bar>
+</div>
+<div *ngIf="!loadQ">
+  <div class="w-100 text-right p-2 m-1">
+    <form [formGroup]="filterName">
+      <div>
+        <input
+          class="input-style"
+          placeholder="فیلتر شماره مشترک"
+          formControlName="name"
+        />
+      </div>
+    </form>
+  </div>
+
+  <pagination-controls
+    [autoHide]="true"
+    [directionLinks]="false"
+    class="my-pagination especial"
+    (pageChange)="events($event)"
+  ></pagination-controls>
+
+  <div class="d-flex justify-content-between w-100">
+    <div></div>
+    <div>
+      <button mat-raised-button (click)="exportExcel()">دانلود Excel</button>
+    </div>
+  </div>
+  <div
+    class="border-4 m-1 p-1"
+    *ngFor="let group of groupedData; let i = index"
+  >
+    <ng-container *ngIf="filterCheck(group.tell, filteredName)">
+      <div class="card-header p-2 border my-3 rounded">
+        <div>
+          <span class="text-muted opacity-75">
+            {{ group.tell }}
+          </span>
+          <span class="text-muted opacity-75 text-small">
+            ({{ group["items"][0]?.types }})
+          </span>
+          <span class="text-muted opacity-75 text-small">
+            (لایه {{ group["items"][0]?.level }})
+          </span>
+          <span
+            class="text-small"
+            (click)="showDetails = showDetails == i ? -1 : i"
+            mat-raised-button
+          >
+            مشاهده جزییات
+          </span>
+        </div>
+        <div class="border m-1 p-1">
+          <div>
+            <span class="text-muted opacity-75 text-small">
+              پیمانکار مراجعه کننده به مشترک :
+            </span>
+          </div>
+          <div>
+            <span class="opacity-75 text-small">
+              {{ group["items"][0]?.pey_name }}
+            </span>
+            <span class="opacity-75 text-small">
+              شماره همراه :
+              {{ group["items"][0]?.pey_qrcode }}
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="card-header p-2"
+          (click)="showDetails = showDetails == i ? -1 : i"
+        >
+          <span class="text-muted opacity-75 text-small">
+            ثبت شده توسط
+            {{ group["items"][0]?.userinfo[0]?.name }} -{{
+              group["items"][0]?.userinfo[0]?.family
+            }}
+          </span>
+
+          <span class="text-muted opacity-75 text-small">
+            در تاریخ
+            {{ group["items"][0]?.datetime | jalaliDate: "jYYYY/jMM/jDD" }}
+          </span>
+        </div>
+      </div>
+
+      <table class="table" *ngIf="showDetails === i">
+        <tr>
+          <td>پرسش</td>
+          <td>امتیاز</td>
+          <td>Score</td>
+          <td>گروه</td>
+          <td>تاریخ</td>
+        </tr>
+        <tr *ngFor="let item of group.items; let j = index">
+          <td>{{ item.title }}</td>
+          <td>{{ item.score }}</td>
+          <td>{{ item.ratescore }}</td>
+          <td>{{ item.groups }}</td>
+
+          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+        </tr>
+      </table>
+    </ng-container>
+    <div class="text-center m-2 p-1">
+      <span class="m-2 p-2"> مجموع امتیازها </span>
+      <span class="m-2 p-2">
+        {{ group.totalRateScore }}
+      </span>
+    </div>
+  </div>
+
+  <table id="reportTable" style="display: none">
+    <ng-container *ngFor="let group of groupedData; let i = index">
+      <table class="table">
+        <tr>
+          <td>مشترک</td>
+          <td>پرسش</td>
+          <td>امتیاز</td>
+          <td>Score</td>
+          <td>گروه</td>
+          <td>تاریخ</td>
+          <td>نوع</td>
+          <td>ثبت کننده</td>
+          <td>مرحله</td>
+          <td>پیمانکار مراجعه کننده به مشترک</td>
+          <td>شماره همراه مراجعه کننده به مشترک</td>
+          <td>امتیاز کل</td>
+        </tr>
+        <tr *ngFor="let item of group.items; let j = index">
+          <td>{{ group.tell }}</td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.score }}</td>
+          <td>{{ item.ratescore }}</td>
+          <td>{{ item.groups }}</td>
+          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>{{ group["items"][0]?.types }}</td>
+          <td>
+            {{ group["items"][0]?.userinfo[0]?.name }} -{{
+              group["items"][0]?.userinfo[0]?.family
+            }}
+          </td>
+          <td>لایه {{ group["items"][0]?.level }}</td>
+          <td>
+            {{ group["items"][0]?.pey_name }}
+          </td>
+          <td>
+            {{ group["items"][0]?.pey_qrcode }}
+          </td>
+          <td>
+            {{ group.totalRateScore }}
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+  </table>
+  <div class="modals text-center" *ngIf="modalDel">
+    <div class="w-50 mt-4 bg-light inline">
+      <div class="m-4 p-4">
+        <h5>آیا از حذف مطمین هستید؟</h5>
+      </div>
+      <div class="mt-4 pt-4">
+        <button
+          (click)="delete()"
+          *ngIf="!loadingProgress"
+          class="w-fit m-4"
+          type="submit"
+          mat-raised-button
+        >
+          بله
+        </button>
+      </div>
+      <div>
+        <button
+          (click)="modalDel = false"
+          *ngIf="!loadingProgress"
+          class="w-fit m-4"
+          type="submit"
+          mat-raised-button
+        >
+          انصراف
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

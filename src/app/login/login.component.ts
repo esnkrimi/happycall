@@ -45,7 +45,6 @@ export class LoginComponent implements OnInit {
       .login(username, password)
       .pipe(map((res: any) => res[0]))
       .subscribe((res: any) => {
-        console.log(res);
         this.user = res;
         this.localStorage.setItem('level', res.level);
         this.localStorage.setItem('isLoggedIn', 'true');
@@ -57,7 +56,7 @@ export class LoginComponent implements OnInit {
         this.localStorage.setItem('opId', res.id);
         setTimeout(() => {
           this.router.navigate(['']);
-          // window.location.reload();
+          window.location.reload();
           this.publicValsService.loadinProgress.next(false);
         }, 1);
       });

@@ -10,9 +10,10 @@
   <br /><br />
   <form [formGroup]="formInput" *ngIf="!loadQ">
     <div *ngIf="handle === 0">
+      <h4 class="p-3">لطفا برای شروع شماره مشترک را وارد نمایید</h4>
       <label> شماره ثابت سرویس مشترک</label>
       <input formControlName="tell" type="tel" />
-      <div class="mt-4 border mb-4 p-2">
+      <div *ngIf="userloginedLevel === '1'" class="mt-4 border mb-4 p-2">
         <p>مشخصات پیمانکار</p>
         <div class="m-2">
           <label>اصلا کسی مراجعه نکرده است</label>
@@ -27,16 +28,11 @@
           <input formControlName="pey_name" type="text" />
         </div>
       </div>
-
-      <div class="mt-4 border mb-4 p-2">
+      <div *ngIf="userloginedLevel === '1'" class="mt-4 border mb-4 p-2">
         <p>مشخصات تیکت</p>
         <div class="m-2">
           <label>شماره تیکت</label>
           <input formControlName="ticket_number" type="text" />
-        </div>
-        <div>
-          <label>تاریخ تیکت </label>
-          <input formControlName="ticket_date" type="text" />
         </div>
       </div>
 
@@ -52,8 +48,44 @@
         تایید
       </button>
     </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div *ngIf="handle === 0">
+      <h4 class="p-4 w-100">
+        مشتریان زیر در لایه قبل ارزیابی شده اند . میتوانید جهت سهولت از لیست زیر
+        برای لایه کنونی اقدام نمایید
+      </h4>
+      <table class="table" *ngIf="userPreviousFailure[0]">
+        <tr class="header">
+          <td class="w-25">شماره تلفن مشترک</td>
+          <td>نوع</td>
+          <td>تاریخ تماس لایه قبل</td>
+          <td>نام تماس گیرنده لایه قبل</td>
+        </tr>
+        <tr
+          (click)="chooseTell(itemPrev.tell)"
+          *ngFor="let itemPrev of userPreviousFailure"
+          class="cursor-pointer card-header"
+        >
+          <td>{{ itemPrev.tell }}</td>
+          <td>
+            {{ itemPrev.types }}
+            لایه
+            {{ itemPrev.layer }}
+          </td>
+          <td>{{ itemPrev.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{ itemPrev.userinfo[0]?.name }}
+            {{ itemPrev.userinfo[0]?.family }}
+          </td>
+        </tr>
+      </table>
+    </div>
     <div *ngIf="handle === 1">
-      <label> نوع پشتیبانی</label>
+      <h4 class="p-3">نوع پشتیبانی اعم از خرابی/دایری را انتخاب کنید</h4>
+
       <select (change)="typeQ($event)" formControlName="typehc">
         <option value="خرابی">خرابی</option>
         <option value="دایری">دایری</option>
@@ -75,23 +107,34 @@
                   </h5>
                 </div>
                 <select
-                  [id]="item.qsid"
+                  (change)="changeResult($event, item)"
+                  *ngIf="item.model === 'grade'"
+                >
+                  <option selected="selected">....</option>
+
+                  <option *ngFor="let i of answer" [value]="i.score">
+                    {{ i.answer }}
+                  </option>
+                </select>
+                <select
                   *ngIf="item.model === ''"
                   (change)="changeResult($event, item)"
                 >
                   <option selected="selected">....</option>
-                  <option *ngFor="let i of answer" [value]="i.score">
-                    {{ i.answer }}
-                  </option>
+                  <option value="بله">بله</option>
+                  <option value="خیر">خیر</option>
                 </select>
                 <div *ngIf="item.model === 'special'">
                   <select
                     (change)="changeResult($event, item)"
                     formControlName="result"
                   >
-                    <option *ngFor="let j of scores" [value]="j">
-                      {{ j }}
-                    </option>
+                    <option selected="selected">....</option>
+                    <ng-container *ngFor="let j of scores">
+                      <option *ngIf="j <= item.ceilspecial" [value]="j">
+                        {{ j }}
+                      </option>
+                    </ng-container>
                   </select>
                 </div>
 

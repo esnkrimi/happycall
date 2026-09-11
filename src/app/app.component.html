@@ -1,9 +1,9 @@
 <div
   class="w-100 d-flex justify-content-between shadow opacity-75 p-2 bg-primary3 text-light"
 >
-  <div class="w-50">سامانه تماس شاد</div>
+  <div class="w-50">سامانه تماس شاد مشتریان خانگی</div>
   <div class="cursor-pointer">
-    <i class="px-2">{{ user.name }}-{{ user.family }}</i>
+    <i class="px-2" (click)="logoff()">خروج</i>
     <i class="fa fa-power-off" (click)="logoff()"></i>
   </div>
 </div>
@@ -65,25 +65,30 @@
     <br />
     <hr />
     <br />
-    <div class="m-2 p-3 border bg-white w-50">
-      <p>
-        <span>{{ user.name }} - </span>
-        <span>{{ user.family }}</span>
-      </p>
-      <p>
-        <span> عنوان کاربری : </span>
-        <span>
-          لایه
-          {{ user.level }}</span
-        >
-        <span *ngIf="user.opId === '1'">- مدیر ارشد </span>
-      </p>
-      <p>
-        <span> آدرس :{{ user.address }}</span>
-      </p>
-      <p>
-        <span>شماره تماس : {{ user.tell }}</span>
-      </p>
+    <div class="w-100 text-center">
+      <div class="m-2 p-3 border inline bg-white w-50">
+        <div>
+          <img src="../assets/img/human.jpeg" class="w-100" />
+        </div>
+        <p>
+          <span>{{ user.name }} - </span>
+          <span>{{ user.family }}</span>
+        </p>
+        <p>
+          <span> عنوان کاربری : </span>
+          <span>
+            لایه
+            {{ user.level }}</span
+          >
+          <span *ngIf="user.opId === '1'">- مدیر ارشد </span>
+        </p>
+        <p>
+          <span> آدرس :{{ user.address }}</span>
+        </p>
+        <p>
+          <span>شماره تماس : {{ user.tell }}</span>
+        </p>
+      </div>
     </div>
   </div>
   <div class="w-75 p-4">

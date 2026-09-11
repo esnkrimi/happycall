@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', '1');
+ini_set('display_errors', '1'); 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
@@ -9,29 +9,21 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 include("connection.php");
 include("functions_JSON.php");
-$con = new connection;
-$link = $con->CONNECT_DB();
-if (mysqli_connect_errno())
-    echo "Failed to connect to db: ";
-$id = $_GET['id'];
-$uid = $_GET['uid'];
+$con=new connection;
+$link=$con->CONNECT_DB();
+if (mysqli_connect_errno()) echo "Failed to connect to db: ";
+$id=$_GET['id'];
+$uid=$_GET['uid'];
 
-if ($id == 1)
-    login($con);
-if ($id == 2)
-    submitFailure($con);
-if ($id == 3)
-    fetchMyFailures($con);
-if ($id == 4)
-    edit($con);
-if ($id == 5)
-    delete($con);
-if ($id == 6)
-    fetchQ($con);
-if ($id == 7)
-    updateDontRefre($con);
-if ($id == 8)
-    fetchDontRefrence($con);
+if($id==1)  login($con);    
+if($id==2)  submitFailure($con);    
+if($id==3)  fetchMyFailures($con);    
+if($id==4)  edit($con);    
+if($id==5)  delete($con);    
+if($id==6)  fetchQ($con);    
+if($id==7)  updateDontRefre($con);    
+if($id==8)  fetchDontRefrence($con);    
+if($id==9)  fetchPreviousLayer($con);    
 
 
 $link->close();

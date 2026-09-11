@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class PublicService {
-  userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
+  userBase = 'https://burjcrown.com/drm/hchome/index.php?id=';
   loadingProgress = new BehaviorSubject<boolean>(false);
   constructor(private http: HttpClient) {}
 }

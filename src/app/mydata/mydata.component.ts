@@ -89,8 +89,6 @@ export class MydataComponent implements OnInit {
   groupedData: any = [];
   constructor(
     private localStorage: LocalStorageService,
-    private router: Router,
-    private publicValsService: PublicValsService,
     private serviceService: ServiceService,
     private publicService: PublicService,
   ) {}
@@ -214,6 +212,7 @@ export class MydataComponent implements OnInit {
       )
       .subscribe((res) => {
         this.userFailure = res;
+        console.log(res);
         this.groupedData = Object.entries(
           res.reduce((acc: any, item: any) => {
             (acc[item.tell] ??= []).push(item);
@@ -236,6 +235,7 @@ export class MydataComponent implements OnInit {
             ),
           }));
         }, 300);
+        console.log(this.groupedData);
       });
   }
   events(pageNumber: any) {

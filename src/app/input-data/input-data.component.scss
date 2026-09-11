@@ -29,7 +29,7 @@ button {
 }
 
 .card-header {
-  font-size: 2.3vh;
+  font-size: 2vh;
   cursor: pointer;
   &:hover {
     background-color: aqua;
@@ -42,4 +42,8 @@ button {
 
 .text-small {
   font-size: 1.5vh !important;
+}
+
+.header {
+  background-color: blueviolet;
 }

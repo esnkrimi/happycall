@@ -5,12 +5,15 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ServiceService {
-  userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
+  userBase = 'https://burjcrown.com/drm/hchome/index.php?id=';
   constructor(private http: HttpClient) {}
-  submitFail(formInput: any, type: any) {
+  submitFail(formInput: any, type: any, userloginedLevel: any) {
     const body = new FormData();
     body.append('formInput', JSON.stringify(formInput));
-    return this.http.post(`${this.userBase}2&type=${type}`, body);
+    return this.http.post(
+      `${this.userBase}2&type=${type}&level=${userloginedLevel}`,
+      body,
+    );
   }
 
   delete(item: any) {
@@ -45,5 +48,9 @@ export class ServiceService {
 
   fetchMyFailures(userid: any) {
     return this.http.get(`${this.userBase}3&userid=${userid}`);
+  }
+
+  fetchPreviousFailures(level: any) {
+    return this.http.get(`${this.userBase}9&level=${level}`);
   }
 }

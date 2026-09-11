@@ -1,0 +1,98 @@
+<div
+  class="w-100 d-flex justify-content-between shadow opacity-75 p-2 bg-primary3 text-light"
+>
+  <div class="w-50">سامانه تماس شاد</div>
+  <div class="cursor-pointer">
+    <i class="px-2">{{ user.name }}-{{ user.family }}</i>
+    <i class="fa fa-power-off" (click)="logoff()"></i>
+  </div>
+</div>
+<div class="bg-white w-100 d-flex">
+  <div class="w-25 border h-100">
+    <div
+      (click)="activeProgress(true)"
+      [routerLink]="'/'"
+      [class.selected-div]="
+        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
+      "
+      class="hover-color w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span> ورود اطلاعات </span>
+    </div>
+
+    <div
+      (click)="activeProgress(true)"
+      [routerLink]="'/mydata'"
+      [class.selected-div]="
+        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
+      "
+      class="hover-color w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span> شماره های ثبت شده توسط حوزه من </span>
+    </div>
+
+    <div
+      (click)="activeProgress(true)"
+      [routerLink]="'/refrence'"
+      [class.selected-div]="pathFull === 'refrence'"
+      class="hover-color w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span>مراجعه نشده ها</span>
+    </div>
+
+    <div
+      (click)="activeProgress(true)"
+      [routerLink]="'/inputData'"
+      [class.selected-div]="
+        pathFull === '%D8%A8%D8%AF%D9%87%DB%8C%20%D9%82%D8%A8%D9%84%DB%8C'
+      "
+      class="text-muted opacity-50 w-100 text-end p-2 border"
+    >
+      <span>
+        <img src="../assets/img/arpu.png" class="icon" />
+      </span>
+      <span> ویرایش اطلاعات (بزودی)</span>
+    </div>
+    <br />
+    <hr />
+    <br />
+    <div class="m-2 p-3 border bg-white w-50">
+      <p>
+        <span>{{ user.name }} - </span>
+        <span>{{ user.family }}</span>
+      </p>
+      <p>
+        <span> عنوان کاربری : </span>
+        <span>
+          لایه
+          {{ user.level }}</span
+        >
+        <span *ngIf="user.opId === '1'">- مدیر ارشد </span>
+      </p>
+      <p>
+        <span> آدرس :{{ user.address }}</span>
+      </p>
+      <p>
+        <span>شماره تماس : {{ user.tell }}</span>
+      </p>
+    </div>
+  </div>
+  <div class="w-75 p-4">
+    <div class="loading" *ngIf="loadinProgress"></div>
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<div class="w-100 opacity-50 bg-gray text-light text-small text-center p-2">
+  گروه فناوری اطلاعات مخابرات منطقه همدان نسخه
+  {{ 1.01 }}
+</div>

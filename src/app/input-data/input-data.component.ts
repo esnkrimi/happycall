@@ -15,26 +15,25 @@ import * as FileSaver from 'file-saver';
 })
 export class InputDataComponent implements OnInit {
   loadQ = false;
+  valuesSelected: any = [];
+  userloginedLevel: any;
+  userPreviousFailure: any = [];
   answer = [
     {
-      answer: 'بسیار راضی',
-      score: 5,
+      answer: 'عالی',
+      score: 'عالی',
     },
     {
-      answer: 'راضی',
-      score: 4,
+      answer: 'خوب',
+      score: 'خوب',
     },
     {
       answer: 'متوسط',
-      score: 3,
+      score: 'متوسط',
     },
     {
-      answer: 'ناراضی',
-      score: 2,
-    },
-    {
-      answer: 'بسیار ناراضی',
-      score: 1,
+      answer: 'ضعیف',
+      score: 'ضعیف',
     },
   ];
   isOn = false;
@@ -97,7 +96,13 @@ export class InputDataComponent implements OnInit {
     private serviceService: ServiceService,
     private publicService: PublicService,
   ) {}
-
+  getCeilSpecial(ceil: any) {
+    const res: any = [];
+    for (let i = 0; i < ceil; i++) {
+      res.push[i + 1];
+    }
+    return res;
+  }
   modalShow(id: any, del: boolean) {
     this.editID = id;
     this.del = del;
@@ -137,14 +142,17 @@ export class InputDataComponent implements OnInit {
     FileSaver.saveAs(data, 'Report.xlsx');
   }
   ngOnInit(): void {
+    this.fetchPreviousFailures(this.localStorage.getItem('level'));
     this.fetchMyFailures();
     this.listenTofilterName();
+    this.userloginedLevel = this.localStorage.getItem('level');
   }
   listenTofilterName() {
     this.filterName.get('name')?.valueChanges.subscribe((res) => {
       this.filteredName = res;
     });
   }
+
   updateDontRefre() {
     const tell = this.formInput.get('tell')?.value;
     const pey_name = this.formInput.get('pey_name')?.value;
@@ -193,6 +201,19 @@ export class InputDataComponent implements OnInit {
     resultunsatisfying: new FormControl(''),
     repairDateTime: new FormControl(''),
   });
+
+  formResult = new FormGroup({
+    q1: new FormControl(''),
+    q2: new FormControl(''),
+    q3: new FormControl(''),
+    q4: new FormControl(''),
+    q5: new FormControl(''),
+    q6: new FormControl(''),
+    q7: new FormControl(''),
+    q8: new FormControl(''),
+    q9: new FormControl(''),
+    q10: new FormControl(''),
+  });
   resultTotal: any = [];
   score: any;
   changeUnsatisfying(event: any, item: any) {
@@ -215,7 +236,6 @@ export class InputDataComponent implements OnInit {
 
   async fetchMyQ(type: any) {
     const userLevel: any = this.localStorage.getItem('level');
-    console.log(userLevel);
     this.serviceService
       .fetchMyQ(type)
       .pipe(
@@ -229,6 +249,19 @@ export class InputDataComponent implements OnInit {
       });
   }
 
+  fetchPreviousFailures(level: any) {
+    this.publicService.loadingProgress.next(false);
+    this.loadQ = true;
+    this.serviceService.fetchPreviousFailures(level).subscribe((res) => {
+      this.userPreviousFailure = res;
+      this.userPreviousFailure = this.userPreviousFailure.filter(
+        (res: any) => res.refrence !== '0',
+      );
+    });
+  }
+  chooseTell(tell: any) {
+    this.formInput.get('tell')?.setValue(tell);
+  }
   fetchMyFailures() {
     this.publicService.loadingProgress.next(false);
     this.loadQ = true;
@@ -264,23 +297,7 @@ export class InputDataComponent implements OnInit {
   events(pageNumber: any) {
     this.paginationPageNumber = pageNumber;
   }
-  update() {
-    this.publicService.loadingProgress.next(true);
-    const shamsiDate = new Intl.DateTimeFormat('fa-IR').format(new Date());
-    this.formEdit.get('opname')?.setValue(this.localStorage.getItem('opname'));
-    this.formEdit
-      .get('opfamily')
-      ?.setValue(this.localStorage.getItem('opfamily'));
-    this.formEdit.get('opType')?.setValue(this.localStorage.getItem('opType'));
-    this.formEdit.get('opId')?.setValue(this.localStorage.getItem('opId'));
-    this.formEdit.get('datetime')?.setValue(shamsiDate);
-    this.serviceService
-      .edit(this.formEdit.value, this.editID)
-      .subscribe((res) => {
-        this.fetchMyFailures();
-        this.modal = false;
-      });
-  }
+
   async typeQ(type: any) {
     this.loadQ = true;
     await this.fetchMyQ(type?.target.value);
@@ -295,22 +312,7 @@ export class InputDataComponent implements OnInit {
       this.modal = false;
     });
   }
-  submit() {
-    this.publicService.loadingProgress.next(true);
-    const shamsiDate = new Intl.DateTimeFormat('fa-IR').format(new Date());
-    this.formInput.get('opname')?.setValue(this.localStorage.getItem('opname'));
-    this.formInput
-      .get('opfamily')
-      ?.setValue(this.localStorage.getItem('opfamily'));
-    this.formInput.get('opType')?.setValue(this.localStorage.getItem('opType'));
-    this.formInput.get('opId')?.setValue(this.localStorage.getItem('opId'));
-    this.formInput.get('datetime')?.setValue(shamsiDate);
-    const type = this.formInput.get('typehc')?.value;
-    this.serviceService.submitFail(this.resultTotal, type).subscribe((res) => {
-      alert('با موفقیت ثبت شد');
-      window.location.reload();
-    });
-  }
+
   changeResultText(result: any, item: any) {
     this.handle++;
     this.score = this.formSuggest.get('modelText')?.value;
@@ -380,8 +382,26 @@ export class InputDataComponent implements OnInit {
       pey_name: pey_name,
       ticket_number: ticket_number,
       ticket_date: ticket_date,
-      ratescore: Number(this.score) * Number(item.rate),
+      ratescore: 0,
     });
+  }
+  submit() {
+    this.publicService.loadingProgress.next(true);
+    const shamsiDate = new Intl.DateTimeFormat('fa-IR').format(new Date());
+    this.formInput.get('opname')?.setValue(this.localStorage.getItem('opname'));
+    this.formInput
+      .get('opfamily')
+      ?.setValue(this.localStorage.getItem('opfamily'));
+    this.formInput.get('opType')?.setValue(this.localStorage.getItem('opType'));
+    this.formInput.get('opId')?.setValue(this.localStorage.getItem('opId'));
+    this.formInput.get('datetime')?.setValue(shamsiDate);
+    const type = this.formInput.get('typehc')?.value;
+    this.serviceService
+      .submitFail(this.resultTotal, type, this.userloginedLevel)
+      .subscribe((res) => {
+        alert('با موفقیت ثبت شد');
+        window.location.reload();
+      });
   }
   getType() {
     const res = this.formInput.get('typehc')?.value;

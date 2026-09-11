@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ServiceService {
-  userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
+  userBase = 'https://burjcrown.com/drm/hchome/index.php?id=';
   constructor(private http: HttpClient) {}
   login(user: any, pass: any) {
     return this.http.get(`${this.userBase}1&username=${user}&password=${pass}`);

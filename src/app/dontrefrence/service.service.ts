@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class DontrefrenceService {
-  userBase = 'https://burjcrown.com/drm/hc/index.php?id=';
+  userBase = 'https://burjcrown.com/drm/hchome/index.php?id=';
   constructor(private http: HttpClient) {}
   submitFail(formInput: any, type: any) {
     const body = new FormData();
