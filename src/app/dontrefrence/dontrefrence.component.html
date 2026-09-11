@@ -1,24 +1,23 @@
+<h4 class="m-2 p-3">
+  در اینجا مشتریانی را مشاهده میکنید که اذعان دارند کارشناسی به محل آنها اعزام
+  نشده است
+</h4>
 <table class="table">
-  <tr>
+  <tr class="header bg-primary text-light">
     <td>شماره مشترک</td>
-    <td>نام پیمانکار</td>
-    <td>شماره همراه پیمانکار</td>
+    <td>کارشناسی که باید به محل میرفته</td>
     <td>کاربر ثبت کننده</td>
+    <td>تاریخ ثبت</td>
   </tr>
   <tr *ngFor="let item of userFailure; let j = index">
     <td>{{ item.tell }}</td>
-    <td>{{ item.pey_name }}</td>
-    <td>{{ item.pey_qrcode }}</td>
+    <td>{{ item.pey_name }}-{{ item.pey_qrcode }}</td>
     <td>
       {{ item.userinfo[0].name }}
       {{ item.userinfo[0].family }}
-      <p>
-        کاربر مرحله
-        {{ item.userinfo[0].level }}
-      </p>
-      <p>
-        {{ item.userinfo[0].tell }}
-      </p>
+      - کاربر لایه
+      {{ item.userinfo[0].level }}
     </td>
+    <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY  ساعت H:m" }}</td>
   </tr>
 </table>

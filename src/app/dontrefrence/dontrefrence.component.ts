@@ -69,6 +69,7 @@ export class DontrefrenceComponent implements OnInit {
       .fetchMyDontRefrence(this.localStorage.getItem('opId'))
       .subscribe((res) => {
         this.userFailure = res;
+        console.log(res);
       });
   }
 }

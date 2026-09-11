@@ -50,7 +50,7 @@
       </div>
 
       <table class="table" *ngIf="showDetails === i">
-        <tr>
+        <tr class="bg-primary text-light">
           <td>پرسش</td>
           <td>نوع</td>
           <td>نتیجه</td>
@@ -74,7 +74,9 @@
             لایه {{ item.layer }}
           </td>
 
-          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY  ساعت H:m" }}
+          </td>
           <td>
             {{ item.pey_name }}
           </td>
@@ -105,7 +107,9 @@
           <td>{{ group.tell }}</td>
           <td>{{ item.title }}</td>
           <td>{{ item.score }}</td>
-          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY  ساعت H:m" }}
+          </td>
           <td>{{ item.types }}</td>
           <td>
             {{ item?.userinfo[0]?.name }} -{{ item?.userinfo[0]?.family }}

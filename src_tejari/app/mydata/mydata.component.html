@@ -104,7 +104,9 @@
           <td>{{ item.ratescore }}</td>
           <td>{{ item.groups }}</td>
 
-          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY  ساعت H:m" }}
+          </td>
         </tr>
       </table>
     </ng-container>
@@ -139,7 +141,9 @@
           <td>{{ item.score }}</td>
           <td>{{ item.ratescore }}</td>
           <td>{{ item.groups }}</td>
-          <td>{{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{ item.datetime | jalaliDate: "dddd jD jMMMM jYYYY  ساعت H:m" }}
+          </td>
           <td>{{ group["items"][0]?.types }}</td>
           <td>
             {{ group["items"][0]?.userinfo[0]?.name }} -{{

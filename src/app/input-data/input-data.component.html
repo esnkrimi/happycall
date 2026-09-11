@@ -58,7 +58,7 @@
         برای لایه کنونی اقدام نمایید
       </h4>
       <table class="table" *ngIf="userPreviousFailure[0]">
-        <tr class="header">
+        <tr class="header bg-primary text-light">
           <td class="w-25">شماره تلفن مشترک</td>
           <td>نوع</td>
           <td>تاریخ تماس لایه قبل</td>
@@ -75,7 +75,11 @@
             لایه
             {{ itemPrev.layer }}
           </td>
-          <td>{{ itemPrev.datetime | jalaliDate: "dddd jD jMMMM jYYYY" }}</td>
+          <td>
+            {{
+              itemPrev.datetime | jalaliDate: "dddd jD jMMMM jYYYY  ساعت H:m"
+            }}
+          </td>
           <td>
             {{ itemPrev.userinfo[0]?.name }}
             {{ itemPrev.userinfo[0]?.family }}
