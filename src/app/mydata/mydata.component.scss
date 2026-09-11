@@ -46,3 +46,35 @@ button {
 .border-4 {
   border: solid 1px rgb(116, 114, 114);
 }
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+table {
+  width: max-content;
+  min-width: 100%;
+}
+
+th {
+  min-width: 220px;
+  max-width: 300px;
+  white-space: normal !important;
+  line-height: 1.8;
+  text-align: center;
+}
+
+td {
+  text-align: center;
+  white-space: nowrap;
+}
+
+th:first-child,
+td:first-child {
+  min-width: 120px;
+  position: sticky;
+  right: 0;
+  background: white;
+  z-index: 2;
+}

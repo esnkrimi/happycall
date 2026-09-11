@@ -20,7 +20,7 @@ import { MydataComponent } from './mydata/mydata.component';
 import { JalaliDatePipe } from './shared/pipes/jalali-date.pipe';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DontrefrenceComponent } from './dontrefrence/dontrefrence.component';
-
+import { MatTableModule } from '@angular/material/table';
 export const DEVICE_WIDTH = new InjectionToken<string>('DEVICE_WIDTH');
 export const KONVA = new InjectionToken<string>('konva');
 export const DEVICE_TYPE_IS_PC = new InjectionToken<string>(
@@ -45,6 +45,7 @@ registerLocaleData(localeFa);
     NgxPaginationModule,
     PersianPipe,
     CommonModule,
+    MatTableModule,
     AppRoutingModule,
     MatButtonModule,
     MatSlideToggleModule,

@@ -142,6 +142,7 @@ export class MydataComponent implements OnInit {
     this.fetchMyFailures();
     this.listenTofilterName();
     this.fetchUser();
+    this.specialFile();
   }
   listenTofilterName() {
     this.filterName.get('name')?.valueChanges.subscribe((res) => {
@@ -212,7 +213,6 @@ export class MydataComponent implements OnInit {
       )
       .subscribe((res) => {
         this.userFailure = res;
-        console.log(res);
         this.groupedData = Object.entries(
           res.reduce((acc: any, item: any) => {
             (acc[item.tell] ??= []).push(item);
@@ -235,7 +235,6 @@ export class MydataComponent implements OnInit {
             ),
           }));
         }, 300);
-        console.log(this.groupedData);
       });
   }
   events(pageNumber: any) {
@@ -315,5 +314,47 @@ export class MydataComponent implements OnInit {
   chechtell() {
     const tell: any = this.formInput.get('tell')?.value;
     return tell.length;
+  }
+
+  questions: any[] = [];
+  tableData: any[] = [];
+  displayedColumns: string[] = [];
+
+  specialFile() {
+    this.serviceService.specialFile().subscribe((res: any) => {
+      this.questions = res.questions;
+      this.tableData = res.data;
+
+      this.displayedColumns = [
+        'tell',
+        ...this.questions.map((q) => q.qid.toString()),
+      ];
+    });
+  }
+
+  exportExcelSpecial(): void {
+    const element = document.getElementById('reportTable2');
+
+    if (!element) {
+      return;
+    }
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    const workbook: XLSX.WorkBook = {
+      Sheets: { Report: worksheet },
+      SheetNames: ['Report'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+    });
+
+    FileSaver.saveAs(data, 'Report.xlsx');
   }
 }

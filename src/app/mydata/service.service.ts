@@ -33,4 +33,8 @@ export class ServiceService {
   fetchMyFailures(userid: any) {
     return this.http.get(`${this.userBase}3&userid=${userid}`);
   }
+
+  specialFile() {
+    return this.http.get<any>(`${this.userBase}10`);
+  }
 }

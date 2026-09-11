@@ -3,7 +3,56 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
+function fileSpecial($conn){
+$sql = "
+    SELECT
+        f.tell,
+        f.qid,
+        f.score,
+        q.title,q.groups
+    FROM failure_h f
+    INNER JOIN questions_h q ON q.qsid = f.qid
+    WHERE f.qid > 0
+    ORDER BY f.tell, f.qid
+";
 
+$result=$conn->QUERY_RUN($conn,$sql);
+$data = [];
+$questions = [];
+
+while ($row = $result->fetch_assoc()) {
+
+    $tell = $row['tell'];
+    $qid = $row['qid'];
+
+    // لیست سوالات
+    if (!isset($questions[$qid])) {
+        $questions[$qid] = [
+            'qid' => $qid,
+            'title' => $row['title']. $row['groups'],
+            
+        ];
+    }
+
+    // ایجاد شماره تلفن
+    if (!isset($data[$tell])) {
+        $data[$tell] = [
+            'tell' => $tell
+        ];
+    }
+
+    // score مربوط به سوال
+    $data[$tell][$qid] = $row['score'];
+}
+
+echo json_encode([
+    'questions' => array_values($questions),
+    'data' => array_values($data)
+], JSON_UNESCAPED_UNICODE);
+
+
+
+}
 
 function fetchPreviousLayer($con){
   $level=$_GET['level'];

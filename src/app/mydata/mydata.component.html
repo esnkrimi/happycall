@@ -28,7 +28,12 @@
   <div class="d-flex justify-content-between w-100">
     <div></div>
     <div>
-      <button mat-raised-button (click)="exportExcel()">دانلود Excel</button>
+      <button mat-raised-button (click)="exportExcel()">
+        دانلود Excel فرمت ۱
+      </button>
+      <button mat-raised-button (click)="exportExcelSpecial()">
+        دانلود Excel فرمت ۲
+      </button>
     </div>
   </div>
   <div class="m-1 p-1" *ngFor="let group of groupedData; let i = index">
@@ -154,4 +159,35 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="table-container" id="reportTable2" style="display: none">
+  <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+    <!-- شماره تلفن -->
+    <ng-container matColumnDef="tell">
+      <th mat-header-cell *matHeaderCellDef>شماره تلفن</th>
+
+      <td mat-cell *matCellDef="let row">
+        {{ row.tell }}
+      </td>
+    </ng-container>
+
+    <!-- سوالات -->
+    <ng-container
+      *ngFor="let question of questions"
+      [matColumnDef]="question.qid.toString()"
+    >
+      <th mat-header-cell *matHeaderCellDef>
+        {{ question.title }} {{ question.groups }}
+      </th>
+
+      <td mat-cell *matCellDef="let row">
+        {{ row[question.qid] || "-" }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
 </div>
