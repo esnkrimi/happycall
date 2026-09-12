@@ -53,37 +53,46 @@ echo json_encode([
 
 
 }
-
 function fetchPreviousLayer($con){
-  $level=$_GET['level'];
-$sql="SELECT DISTINCT
-    t1.tell,
-    t1.types,
-    t1.datetime,
-    t1.layer,
-    t1.refrence,
-    t1.userid
-FROM failure_h t1
-WHERE t1.layer = $level-1
-  AND NOT EXISTS (
-      SELECT 1
-      FROM failure_h t2
-      WHERE t2.tell = t1.tell
-        AND t2.layer = $level
-  )";
-//echo $sql;
-  if ($result=$con->QUERY_RUN($con,$sql)	){
-    $resultArray = array();
-   while($row = $result->fetch_object()){
-       $userid=$row->userid;
-       $row->userinfo=fetchUserByID($con,$userid);
-    array_push($resultArray, $row);    
-   }
-    $t=json_encode($resultArray);
-     echo $t;
-  } 
-}
+    $level = (int)$_GET['level'];
+    $previousLayer = $level - 1;
 
+    $sql = "
+        SELECT
+            t1.tell,
+            t1.types,
+            t1.datetime,
+            t1.layer,
+            t1.refrence,
+            t1.userid
+        FROM failure_h t1
+        INNER JOIN (
+            SELECT tell, MAX(id) AS max_id
+            FROM failure_h
+            WHERE layer = $previousLayer
+              AND tell NOT IN (
+                  SELECT tell
+                  FROM failure_h
+                  WHERE layer = $level
+              )
+            GROUP BY tell
+        ) t2 ON t2.max_id = t1.id
+        WHERE t1.layer = $previousLayer
+    ";
+
+    if ($result = $con->QUERY_RUN($con, $sql)) {
+        $resultArray = array();
+
+        while ($row = $result->fetch_object()) {
+            $userid = $row->userid;
+            $row->userinfo = fetchUserByID($con, $userid);
+
+            $resultArray[] = $row;
+        }
+
+        echo json_encode($resultArray);
+    }
+}
 
 
 function updateDontRefre($con){
@@ -97,8 +106,8 @@ $date = new DateTime();
 $date=$date->format('Y-m-d H:i:s');
 $id = $con->GET_MAX_COL('failure_h', 'id');
 $sql = "INSERT INTO failure_h
-(id, userid, tell, score, ratescore,qid,modelresult,types,pey_qrcode,pey_name,refrence,ticket_number,ticket_date,datetime)
-VALUES ($id,$user_id,$tell,'','',0,'','','$pey_qrcode','$pey_name',0,'$ticket_number','$ticket_date','$date')";
+(id, userid, tell, score, ratescore,qid,modelresult,types,pey_qrcode,pey_name,refrence,ticket_number,ticket_date,datetime,layer)
+VALUES ($id,$user_id,$tell,'',0,0,'','','$pey_qrcode','$pey_name',0,'$ticket_number','$ticket_date','$date',1)";
 //echo $sql;
 $result=$con->QUERY_RUN($con,$sql);
 echo('[{"commited":"1"}]');
@@ -254,14 +263,14 @@ $id = $con->GET_MAX_COL('failure_h', 'id');
 $date = new DateTime();
 $date=$date->format('Y-m-d H:i:s');
     $sql = "INSERT INTO failure_h
-    (id, userid, tell, datetime, score, ratescore,qid,types,pey_qrcode,pey_name,refrence,ticket_number,ticket_date,modelresult,layer)
+    (id, userid, tell, datetime, score,ratescore,qid,types,pey_qrcode,pey_name,refrence,ticket_number,ticket_date,modelresult,layer)
     VALUES (
         $id,
         '{$row['userid']}',
         '{$row['tell']}',
         '$date',
         '{$row['score']}',
-        '{$row['ratescore']}',
+        0,
         '{$row['qsid']}',
         '$type',
         '{$row['pey_qrcode']}',
