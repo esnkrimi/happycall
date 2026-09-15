@@ -79,17 +79,26 @@ function fetchPreviousLayer($con){
         ) t2 ON t2.max_id = t1.id
         WHERE t1.layer = $previousLayer
     ";
-
+    $date = new DateTime();
+    $date=$date->format('Y-m-d H:i:s');
     if ($result = $con->QUERY_RUN($con, $sql)) {
         $resultArray = array();
-
         while ($row = $result->fetch_object()) {
+	    $date1 = new DateTime();
+	    $date2 = new DateTime($row->datetime);
+	    $diff = $date1->getTimestamp() - $date2->getTimestamp();
+	    $hours = $diff / (3600*24);
+            $row->layer=$row->types." (".(int)($hours)." روز پیش)";
+	    $row->countdate=(int)($hours);
             $userid = $row->userid;
             $row->userinfo = fetchUserByID($con, $userid);
-
+	    if((int)($hours)>=3)
             $resultArray[] = $row;
         }
 
+ usort($resultArray, function ($a, $b) {
+    return $b->countdate <=> $a->countdate;
+});
         echo json_encode($resultArray);
     }
 }
