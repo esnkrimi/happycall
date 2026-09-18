@@ -36,6 +36,8 @@ if ($id == 9)
     fetchPreviousLayer($con);
 if ($id == 10)
     fileSpecial($con);
+if ($id == 11)
+    chart($con);
 
 
 $link->close();

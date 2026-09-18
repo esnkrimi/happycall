@@ -21,6 +21,8 @@ import { JalaliDatePipe } from './shared/pipes/jalali-date.pipe';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DontrefrenceComponent } from './dontrefrence/dontrefrence.component';
 import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MydatChartComponent } from './chart/chart.component';
 export const DEVICE_WIDTH = new InjectionToken<string>('DEVICE_WIDTH');
 export const KONVA = new InjectionToken<string>('konva');
 export const DEVICE_TYPE_IS_PC = new InjectionToken<string>(
@@ -29,6 +31,10 @@ export const DEVICE_TYPE_IS_PC = new InjectionToken<string>(
 export function detectDevice(width: any): boolean {
   return width < 1025 ? false : true;
 }
+import { MatSelectModule } from '@angular/material/select';
+import { BaseChartDirective } from 'ng2-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 registerLocaleData(localeFa);
 
 @NgModule({
@@ -39,13 +45,20 @@ registerLocaleData(localeFa);
     DontrefrenceComponent,
     JalaliDatePipe,
     LoginComponent,
+    MydatChartComponent,
   ],
   imports: [
     BrowserModule,
     NgxPaginationModule,
     PersianPipe,
     CommonModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatSelectModule,
+    BaseChartDirective,
     MatTableModule,
+    MatFormFieldModule,
     AppRoutingModule,
     MatButtonModule,
     MatSlideToggleModule,

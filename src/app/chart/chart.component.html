@@ -1,0 +1,151 @@
+<div class="dashboard">
+  <div class="page-header">
+    <div>
+      <h2>تحلیل رضایت مشتری - Happy Call</h2>
+      <p>مقایسه عملکرد کاربران و میزان رضایت از سؤالات</p>
+    </div>
+  </div>
+  <div class="w-100">
+    <mat-select
+      class="w-50 border m-2 p-1 bg-light"
+      [(value)]="selectedLevel"
+      (selectionChange)="levelChanged()"
+    >
+      <mat-option [value]="1">تماس شاد لایه 1</mat-option>
+      <mat-option [value]="2">تماس شاد لایه 2</mat-option>
+      <mat-option [value]="3">تماس شاد لایه 3</mat-option>
+    </mat-select>
+  </div>
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">در حال دریافت اطلاعات...</div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Summary -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-title">تعداد کاربران</div>
+        <div class="summary-value">
+          {{ users.length | number }}
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-title">تعداد سؤال‌ها</div>
+        <div class="summary-value">
+          {{ questions.length | number }}
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-title">تعداد پاسخ‌ها</div>
+        <div class="summary-value">
+          {{ totalAnswers | number }}
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-title">رضایت کلی</div>
+        <div class="summary-value">
+          {{ overallSatisfaction | number: "1.0-1" }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Users -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>مقایسه کاربران</h3>
+          <span>Level {{ selectedLevel }}</span>
+        </div>
+      </div>
+
+      <div class="chart-container users-chart">
+        <canvas
+          baseChart
+          [data]="usersChartData"
+          [options]="usersChartOptions"
+          [type]="'bar'"
+        >
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>مقایسه میزان رضایت از سؤالات</h3>
+          <span>رضایت و عدم رضایت مشتریان</span>
+        </div>
+      </div>
+
+      <div class="chart-container questions-chart">
+        <canvas
+          baseChart
+          [data]="questionsChartData"
+          [options]="questionsChartOptions"
+          [type]="'bar'"
+        >
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Question details -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>جزئیات سؤالات</h3>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ردیف</th>
+              <th>سؤال</th>
+              <th>تعداد پاسخ</th>
+              <th>رضایت</th>
+              <th>عدم رضایت</th>
+              <th>درصد رضایت</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let q of questions; let i = index">
+              <td>{{ i + 1 }}</td>
+
+              <td class="question-title">
+                {{ q.title }}
+              </td>
+
+              <td>
+                {{ q.total | number }}
+              </td>
+
+              <td class="satisfied">
+                {{ q.satisfied | number }}
+              </td>
+
+              <td class="unsatisfied">
+                {{ q.unsatisfied | number }}
+              </td>
+
+              <td>
+                <div class="percent-wrapper">
+                  <div class="percent-bar">
+                    <div
+                      class="percent-fill"
+                      [style.width.%]="q.satisfactionPercent"
+                    ></div>
+                  </div>
+
+                  <span> {{ q.satisfactionPercent | number: "1.0-1" }}% </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>

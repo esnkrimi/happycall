@@ -3,6 +3,290 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
+function chart($conn)
+{
+
+    $level = isset($_GET['level'])
+        ? (int)$_GET['level']
+        : 0;
+
+
+    $sqlUsers = "
+        SELECT
+            u.id AS userid,
+
+            CONCAT(
+                COALESCE(u.name, ''),
+                ' ',
+                COALESCE(u.family, '')
+            ) AS username,
+
+            COUNT(f.id) AS total,
+
+            SUM(
+                CASE
+                    WHEN LOWER(TRIM(f.score)) IN (
+                        'بله',
+                        'عالی',
+                        'خوب'
+                    )
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS satisfied,
+
+            SUM(
+                CASE
+                    WHEN LOWER(TRIM(f.score)) IN (
+                        'خیر',
+                        'ضعیف'
+                    )
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS unsatisfied
+
+        FROM user_h u
+
+        LEFT JOIN (
+            SELECT
+                f.*
+            FROM failure_h f
+
+            INNER JOIN questions_h q
+                ON q.qsid = f.qid
+
+            WHERE q.level = $level
+        ) f
+            ON f.userid = u.id
+
+        WHERE u.level = $level
+
+        GROUP BY
+            u.id,
+            u.name,
+            u.family
+
+        ORDER BY total DESC
+    ";
+
+    $users = [];
+
+    $stmt = $conn->QUERY_RUN($conn, $sqlUsers);
+
+    if ($stmt) {
+
+        while ($row = $stmt->fetch_assoc()) {
+
+            $total =
+                (int)$row['total'];
+
+            $satisfied =
+                (int)$row['satisfied'];
+
+            $unsatisfied =
+                (int)$row['unsatisfied'];
+
+            $satisfactionPercent =
+                $total > 0
+                ? ($satisfied / $total) * 100
+                : 0;
+
+            $users[] = [
+
+                'userid' =>
+                    (int)$row['userid'],
+
+                'username' =>
+                    trim($row['username']),
+
+                'total' =>
+                    $total,
+
+                'satisfied' =>
+                    $satisfied,
+
+                'unsatisfied' =>
+                    $unsatisfied,
+
+                'satisfactionPercent' =>
+                    round(
+                        $satisfactionPercent,
+                        1
+                    )
+            ];
+        }
+    }
+
+
+    // =========================================================
+    // QUESTIONS
+    // =========================================================
+
+    $sqlQuestions = "
+        SELECT
+
+            q.qsid AS qid,
+
+            q.title,
+
+            q.model,
+
+            COUNT(f.id) AS total,
+
+            SUM(
+                CASE
+                    WHEN LOWER(TRIM(f.score)) IN (
+                        'بله',
+                        'عالی',
+                        'خوب'
+                    )
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS satisfied,
+
+            SUM(
+                CASE
+                    WHEN LOWER(TRIM(f.score)) IN (
+                        'خیر',
+                        'ضعیف'
+                    )
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS unsatisfied
+
+        FROM questions_h q
+
+        LEFT JOIN failure_h f
+            ON f.qid = q.qsid
+
+        WHERE q.level = $level
+
+        GROUP BY
+            q.qsid,
+            q.title,
+            q.model
+
+        ORDER BY
+            q.qsid
+    ";
+
+    $questions = [];
+
+    $totalAnswers = 0;
+
+    $totalSatisfied = 0;
+
+
+    $stmt = $conn->QUERY_RUN(
+        $conn,
+        $sqlQuestions
+    );
+
+
+    if ($stmt) {
+
+        while ($row = $stmt->fetch_assoc()) {
+
+            $total =
+                (int)$row['total'];
+
+            $satisfied =
+                (int)$row['satisfied'];
+
+            $unsatisfied =
+                (int)$row['unsatisfied'];
+
+
+            $satisfactionPercent =
+                $total > 0
+                ? ($satisfied / $total) * 100
+                : 0;
+
+
+            $questions[] = [
+
+                'qid' =>
+                    (int)$row['qid'],
+
+                'title' =>
+                    $row['title'],
+
+                'model' =>
+                    $row['model'],
+
+                'total' =>
+                    $total,
+
+                'satisfied' =>
+                    $satisfied,
+
+                'unsatisfied' =>
+                    $unsatisfied,
+
+                'satisfactionPercent' =>
+                    round(
+                        $satisfactionPercent,
+                        1
+                    )
+            ];
+
+
+            $totalAnswers += $total;
+
+            $totalSatisfied += $satisfied;
+        }
+    }
+
+
+    // =========================================================
+    // OVERALL
+    // =========================================================
+
+    $overallSatisfaction =
+        $totalAnswers > 0
+        ? (
+            $totalSatisfied /
+            $totalAnswers
+        ) * 100
+        : 0;
+
+
+    // =========================================================
+    // JSON
+    // =========================================================
+
+    echo json_encode(
+
+        [
+
+            'level' =>
+                $level,
+
+            'users' =>
+                $users,
+
+            'questions' =>
+                $questions,
+
+            'totalAnswers' =>
+                $totalAnswers,
+
+            'overallSatisfaction' =>
+                round(
+                    $overallSatisfaction,
+                    1
+                )
+        ],
+
+        JSON_UNESCAPED_UNICODE |
+        JSON_UNESCAPED_SLASHES
+    );
+}
+
+
 function fileSpecial($conn){
 $sql = "
     SELECT
@@ -96,8 +380,12 @@ function fetchPreviousLayer($con){
             $resultArray[] = $row;
         }
 
- usort($resultArray, function ($a, $b) {
-    return $b->countdate <=> $a->countdate;
+usort($resultArray, function ($a, $b) {
+    if ($b->countdate == $a->countdate) {
+        return 0;
+    }
+
+    return ($b->countdate > $a->countdate) ? 1 : -1;
 });
         echo json_encode($resultArray);
     }
