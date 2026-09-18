@@ -54,7 +54,7 @@ export class HappyCallService {
   constructor(private http: HttpClient) {}
 
   getChartData(layer: string): Observable<HappyCallResponse> {
-    const params = new HttpParams().set('layer', 1);
+    const params = new HttpParams().set('layer', layer);
 
     return this.http.get<HappyCallResponse>(this.apiUrl, { params });
   }
