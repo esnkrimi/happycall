@@ -1,40 +1,61 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface HappyCallUser {
+  userid: number;
+  username: string;
+  answer_count: number;
+  call_count: number;
+}
+
+export interface HappyCallAnswer {
+  answer: string;
+  count: number;
+}
+
+export interface HappyCallQuestion {
+  qid: number;
+  title: string;
+  group: string;
+  level: string;
+  type: string;
+  model: string;
+  ceilspecial: number;
+  answers: HappyCallAnswer[];
+}
+
+export interface HappyCallResponse {
+  success: boolean;
+
+  layer: string;
+
+  summary: {
+    users: number;
+    answers: number;
+    calls: number;
+    questions: number;
+  };
+
+  users: HappyCallUser[];
+
+  questions: HappyCallQuestion[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class ServiceService {
-  userBase = 'https://burjcrown.com/drm/hchome/index.php?id=';
+export class HappyCallService {
+  /*
+   * آدرس PHP خودتان را اینجا قرار دهید
+   */
+  private apiUrl = 'https://burjcrown.com/drm/hchome/index.php?id=11';
+
   constructor(private http: HttpClient) {}
-  submitFail(formInput: any, type: any) {
-    const body = new FormData();
-    body.append('formInput', JSON.stringify(formInput));
-    return this.http.post(`${this.userBase}2&type=${type}`, body);
-  }
 
-  delete(item: any) {
-    return this.http.get(
-      `${this.userBase}5&datetime=${item.datetime}&userid=${item.userid}&tell=${item.tell}`,
-    );
-  }
+  getChartData(layer: string): Observable<HappyCallResponse> {
+    const params = new HttpParams().set('layer', 1);
 
-  edit(formInput: any, id: any) {
-    return this.http.get(
-      `${this.userBase}4&formInput=${JSON.stringify(formInput)}&fid=${id}`,
-    );
-  }
-
-  fetchMyQ(type: any) {
-    const level = localStorage.getItem('opId');
-    return this.http.get(`${this.userBase}6&type=${type}&level=${level}`);
-  }
-
-  fetchMyFailures(userid: any) {
-    return this.http.get(`${this.userBase}3&userid=${userid}`);
-  }
-
-  specialFile() {
-    return this.http.get<any>(`${this.userBase}10`);
+    return this.http.get<HappyCallResponse>(this.apiUrl, { params });
   }
 }

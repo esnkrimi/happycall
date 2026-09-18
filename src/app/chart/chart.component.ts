@@ -1,301 +1,614 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { LocalStorageService } from '../localstorage';
-import { Router } from '@angular/router';
-import { PublicValsService } from '../public-vals.service';
-import { ServiceService } from './service.service';
-import { map, tap } from 'rxjs';
-import { PublicService } from '../service.service';
-import * as XLSX from 'xlsx';
-import * as FileSaver from 'file-saver';
-import * as moment from 'jalali-moment';
-import { HttpClient } from '@angular/common/http';
 import {
-  Chart,
-  ChartConfiguration,
-  ChartOptions,
-  registerables,
-} from 'chart.js';
-Chart.register(...registerables);
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
+
+import {
+  HappyCallService,
+  HappyCallResponse,
+  HappyCallUser,
+  HappyCallQuestion,
+} from './service.service';
+
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
   styleUrl: './chart.component.scss',
 })
-export class MydatChartComponent implements OnInit {
-  selectedLevel = 1;
+export class MydatChartComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('usersCanvas')
+  usersCanvas!: ElementRef<HTMLCanvasElement>;
+
+  @ViewChild('questionsCanvas')
+  questionsCanvas!: ElementRef<HTMLCanvasElement>;
+
+  selectedLayer = '0';
 
   loading = false;
 
-  users: UserAnalysis[] = [];
+  errorMessage = '';
 
-  questions: QuestionAnalysis[] = [];
+  data: HappyCallResponse | null = null;
 
-  totalAnswers = 0;
+  private destroy$ = new Subject<void>();
 
-  overallSatisfaction = 0;
+  constructor(private happyCallService: HappyCallService) {}
 
-  /*
-   * نمودار کاربران
-   */
-  usersChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [],
-    datasets: [
-      {
-        label: 'رضایت',
-        data: [],
-        borderWidth: 1,
-      },
-      {
-        label: 'عدم رضایت',
-        data: [],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  usersChartOptions: ChartOptions<'bar'> = {
-    responsive: true,
-
-    maintainAspectRatio: false,
-
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-    },
-
-    scales: {
-      x: {
-        ticks: {
-          font: {
-            family: 'Tahoma',
-          },
-        },
-      },
-
-      y: {
-        beginAtZero: true,
-
-        max: 100,
-
-        ticks: {
-          callback: (value) => `${value}%`,
-        },
-      },
-    },
-  };
-
-  /*
-   * نمودار سؤالات
-   */
-  questionsChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [],
-    datasets: [
-      {
-        label: 'رضایت',
-        data: [],
-        borderWidth: 1,
-      },
-      {
-        label: 'عدم رضایت',
-        data: [],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  questionsChartOptions: ChartOptions<'bar'> = {
-    indexAxis: 'y',
-
-    responsive: true,
-
-    maintainAspectRatio: false,
-
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-    },
-
-    scales: {
-      x: {
-        beginAtZero: true,
-
-        max: 100,
-
-        ticks: {
-          callback: (value) => `${value}%`,
-        },
-      },
-
-      y: {
-        ticks: {
-          font: {
-            family: 'Tahoma',
-            size: 12,
-          },
-        },
-      },
-    },
-  };
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit(): void {
-    this.loadDashboard();
+  ngAfterViewInit(): void {
+    this.loadData();
   }
 
-  levelChanged(): void {
-    this.loadDashboard();
+  /*
+   * تغییر سطح
+   */
+
+  onLayerChange(): void {
+    this.loadData();
   }
 
-  loadDashboard(): void {
+  /*
+   * دریافت اطلاعات از PHP
+   */
+
+  loadData(): void {
     this.loading = true;
 
-    const url = `https://burjcrown.com/drm/hchome/index.php?id=11&level=${this.selectedLevel}&`;
+    this.errorMessage = '';
 
-    this.http.get<DashboardResponse>(url).subscribe({
-      next: (result) => {
-        this.users = result.users || [];
+    this.happyCallService
+      .getChartData(this.selectedLayer)
 
-        this.questions = result.questions || [];
+      .pipe(takeUntil(this.destroy$))
 
-        this.totalAnswers = result.totalAnswers || 0;
+      .subscribe({
+        next: (response) => {
+          this.loading = false;
 
-        this.overallSatisfaction = result.overallSatisfaction || 0;
+          if (!response.success) {
+            this.errorMessage = 'دریافت اطلاعات با خطا مواجه شد';
 
-        this.createUsersChart();
+            return;
+          }
 
-        this.createQuestionsChart();
+          this.data = response;
 
-        this.loading = false;
-      },
+          /*
+           * اجازه می دهیم Angular View را به روز کند
+           * سپس Canvas را رسم می کنیم.
+           */
 
-      error: (error) => {
-        console.error('Happy Call Dashboard Error:', error);
+          setTimeout(() => {
+            this.drawUsersChart();
 
-        this.users = [];
+            this.drawQuestionsChart();
+          });
+        },
 
-        this.questions = [];
+        error: (error) => {
+          this.loading = false;
 
-        this.totalAnswers = 0;
+          console.error(error);
 
-        this.overallSatisfaction = 0;
+          this.errorMessage = 'خطا در ارتباط با سرور';
+        },
+      });
+  }
 
-        this.loading = false;
-      },
+  /*
+   * ============================================================
+   * نمودار کاربران
+   * ============================================================
+   */
+
+  drawUsersChart(): void {
+    if (!this.data) {
+      return;
+    }
+
+    const canvas = this.usersCanvas.nativeElement;
+
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      return;
+    }
+
+    const users = this.data.users;
+
+    const width = canvas.clientWidth || 900;
+
+    const height = 420;
+
+    /*
+     * رزولوشن واقعی Canvas
+     */
+
+    canvas.width = width * devicePixelRatio;
+
+    canvas.height = height * devicePixelRatio;
+
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+
+    ctx.clearRect(0, 0, width, height);
+
+    /*
+     * اگر داده نداریم
+     */
+
+    if (users.length === 0) {
+      this.drawCenteredText(
+        ctx,
+        'اطلاعاتی برای این سطح وجود ندارد',
+        width,
+        height,
+      );
+
+      return;
+    }
+
+    const margin = {
+      top: 40,
+
+      right: 40,
+
+      bottom: 90,
+
+      left: 70,
+    };
+
+    const chartWidth = width - margin.left - margin.right;
+
+    const chartHeight = height - margin.top - margin.bottom;
+
+    const maxValue = Math.max(...users.map((x) => x.answer_count));
+
+    /*
+     * عنوان
+     */
+
+    this.drawText(
+      ctx,
+      'تعداد پاسخ‌های ثبت‌شده توسط هر کاربر',
+      width / 2,
+      22,
+      17,
+      true,
+      'center',
+    );
+
+    /*
+     * خطوط راهنما
+     */
+
+    this.drawGrid(
+      ctx,
+      margin.left,
+      margin.top,
+      chartWidth,
+      chartHeight,
+      maxValue,
+    );
+
+    const barGap = 25;
+
+    const barWidth = Math.min(
+      80,
+      (chartWidth - barGap * (users.length + 1)) / users.length,
+    );
+
+    users.forEach((user, index) => {
+      const x = margin.left + barGap + index * (barWidth + barGap);
+
+      const barHeight =
+        maxValue > 0 ? (user.answer_count / maxValue) * chartHeight : 0;
+
+      const y = margin.top + chartHeight - barHeight;
+
+      /*
+       * میله
+       */
+
+      ctx.fillStyle = '#1976d2';
+
+      ctx.fillRect(x, y, barWidth, barHeight);
+
+      /*
+       * عدد بالای میله
+       */
+
+      this.drawText(
+        ctx,
+        this.toPersianNumber(user.answer_count),
+        x + barWidth / 2,
+        y - 8,
+        13,
+        true,
+        'center',
+      );
+
+      /*
+       * نام کاربر
+       */
+
+      this.drawText(
+        ctx,
+        user.username,
+        x + barWidth / 2,
+        margin.top + chartHeight + 25,
+        12,
+        false,
+        'center',
+      );
+
+      /*
+       * تعداد تماس
+       */
+
+      this.drawText(
+        ctx,
+        `تماس: ${this.toPersianNumber(user.call_count)}`,
+        x + barWidth / 2,
+        margin.top + chartHeight + 48,
+        11,
+        false,
+        'center',
+      );
     });
   }
 
   /*
-   * نمودار کاربران
-   *
-   * برای هر کاربر:
-   * درصد رضایت
-   * درصد عدم رضایت
+   * ============================================================
+   * نمودار پاسخ سوالات
+   * ============================================================
    */
-  createUsersChart(): void {
-    this.usersChartData = {
-      labels: this.users.map((user) => user.username),
 
-      datasets: [
-        {
-          label: 'رضایت',
+  drawQuestionsChart(): void {
+    if (!this.data) {
+      return;
+    }
 
-          data: this.users.map((user) => user.satisfactionPercent),
+    const canvas = this.questionsCanvas.nativeElement;
 
-          borderWidth: 1,
-        },
+    const ctx = canvas.getContext('2d');
 
-        {
-          label: 'عدم رضایت',
+    if (!ctx) {
+      return;
+    }
 
-          data: this.users.map((user) => 100 - user.satisfactionPercent),
+    const questions = this.data.questions;
 
-          borderWidth: 1,
-        },
-      ],
-    };
+    const width = canvas.clientWidth || 1200;
+
+    /*
+     * برای تعداد زیاد سؤال
+     * Canvas بلند می شود.
+     */
+
+    const questionHeight = 260;
+
+    const height = Math.max(500, questions.length * questionHeight);
+
+    canvas.width = width * devicePixelRatio;
+
+    canvas.height = height * devicePixelRatio;
+
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (questions.length === 0) {
+      this.drawCenteredText(
+        ctx,
+        'اطلاعاتی برای این سطح وجود ندارد',
+        width,
+        300,
+      );
+
+      return;
+    }
+
+    /*
+     * هر سؤال یک گروه از میله هاست
+     */
+
+    questions.forEach((question, questionIndex) => {
+      this.drawQuestionGroup(ctx, question, questionIndex, width);
+    });
   }
 
   /*
-   * نمودار سؤالات
+   * رسم یک سؤال
    */
-  createQuestionsChart(): void {
-    this.questionsChartData = {
-      labels: this.questions.map((question) =>
-        this.shortQuestion(question.title),
-      ),
 
-      datasets: [
-        {
-          label: 'رضایت',
+  private drawQuestionGroup(
+    ctx: CanvasRenderingContext2D,
+    question: HappyCallQuestion,
+    questionIndex: number,
+    width: number,
+  ): void {
+    const groupTop = questionIndex * 260;
 
-          data: this.questions.map((question) => question.satisfactionPercent),
+    const marginLeft = 70;
 
-          borderWidth: 1,
-        },
+    const marginRight = 30;
 
-        {
-          label: 'عدم رضایت',
+    const chartTop = groupTop + 70;
 
-          data: this.questions.map(
-            (question) => 100 - question.satisfactionPercent,
-          ),
+    const chartHeight = 140;
 
-          borderWidth: 1,
-        },
-      ],
-    };
+    const chartWidth = width - marginLeft - marginRight;
+
+    /*
+     * عنوان سؤال
+     */
+
+    const title = `سؤال ${question.qid}: ${question.title}`;
+
+    this.drawText(
+      ctx,
+      this.truncateText(title, 120),
+      width - 30,
+      groupTop + 25,
+      15,
+      true,
+      'right',
+    );
+
+    /*
+     * گروه سؤال
+     */
+
+    if (question.group) {
+      this.drawText(
+        ctx,
+        question.group,
+        width - 30,
+        groupTop + 48,
+        11,
+        false,
+        'right',
+      );
+    }
+
+    /*
+     * جواب ها
+     */
+
+    const answers = question.answers;
+
+    if (answers.length === 0) {
+      return;
+    }
+
+    const maxCount = Math.max(...answers.map((x) => x.count));
+
+    /*
+     * خطوط راهنما
+     */
+
+    this.drawGrid(ctx, marginLeft, chartTop, chartWidth, chartHeight, maxCount);
+
+    const gap = 20;
+
+    const barWidth = Math.min(
+      65,
+      (chartWidth - gap * (answers.length + 1)) / answers.length,
+    );
+
+    answers.forEach((answer, index) => {
+      const x = marginLeft + gap + index * (barWidth + gap);
+
+      const barHeight =
+        maxCount > 0 ? (answer.count / maxCount) * chartHeight : 0;
+
+      const y = chartTop + chartHeight - barHeight;
+
+      /*
+       * میله
+       */
+
+      ctx.fillStyle = this.getBarColor(index);
+
+      ctx.fillRect(x, y, barWidth, barHeight);
+
+      /*
+       * تعداد
+       */
+
+      this.drawText(
+        ctx,
+        this.toPersianNumber(answer.count),
+        x + barWidth / 2,
+        y - 7,
+        12,
+        true,
+        'center',
+      );
+
+      /*
+       * متن پاسخ
+       */
+
+      this.drawText(
+        ctx,
+        this.truncateText(answer.answer, 18),
+        x + barWidth / 2,
+        chartTop + chartHeight + 25,
+        11,
+        false,
+        'center',
+      );
+    });
+
+    /*
+     * خط جداکننده سؤال
+     */
+
+    ctx.beginPath();
+
+    ctx.moveTo(20, groupTop + 250);
+
+    ctx.lineTo(width - 20, groupTop + 250);
+
+    ctx.strokeStyle = '#dddddd';
+
+    ctx.stroke();
   }
 
   /*
-   * کوتاه کردن عنوان سؤال برای Chart
+   * ============================================================
+   * Grid
+   * ============================================================
    */
-  shortQuestion(title: string): string {
-    if (!title) {
-      return '';
+
+  private drawGrid(
+    ctx: CanvasRenderingContext2D,
+    left: number,
+    top: number,
+    width: number,
+    height: number,
+    maxValue: number,
+  ): void {
+    const steps = 5;
+
+    ctx.font = '11px Tahoma';
+
+    for (let i = 0; i <= steps; i++) {
+      const value = Math.round((maxValue * i) / steps);
+
+      const y = top + height - (height * i) / steps;
+
+      ctx.beginPath();
+
+      ctx.moveTo(left, y);
+
+      ctx.lineTo(left + width, y);
+
+      ctx.strokeStyle = '#e5e5e5';
+
+      ctx.stroke();
+
+      this.drawText(
+        ctx,
+        this.toPersianNumber(value),
+        left - 10,
+        y + 4,
+        10,
+        false,
+        'right',
+      );
     }
-
-    const maxLength = 70;
-
-    if (title.length <= maxLength) {
-      return title;
-    }
-
-    return title.substring(0, maxLength) + '...';
   }
-}
 
-interface UserAnalysis {
-  userid: number;
-  username: string;
-  total: number;
-  satisfied: number;
-  unsatisfied: number;
-  satisfactionPercent: number;
-}
+  /*
+   * ============================================================
+   * رنگ میله ها
+   * ============================================================
+   */
 
-interface QuestionAnalysis {
-  qid: number;
-  title: string;
-  model: string;
-  total: number;
-  satisfied: number;
-  unsatisfied: number;
-  satisfactionPercent: number;
-}
+  private getBarColor(index: number): string {
+    const colors = [
+      '#1976d2',
 
-interface DashboardResponse {
-  level: number;
+      '#388e3c',
 
-  users: UserAnalysis[];
+      '#f57c00',
 
-  questions: QuestionAnalysis[];
+      '#7b1fa2',
 
-  totalAnswers: number;
+      '#c62828',
 
-  overallSatisfaction: number;
+      '#00838f',
+
+      '#5d4037',
+
+      '#455a64',
+    ];
+
+    return colors[index % colors.length];
+  }
+
+  /*
+   * ============================================================
+   * Text
+   * ============================================================
+   */
+
+  private drawText(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    x: number,
+    y: number,
+    fontSize = 13,
+    bold = false,
+    align: CanvasTextAlign = 'right',
+  ): void {
+    ctx.font = `${bold ? 'bold ' : ''}${fontSize}px Tahoma`;
+
+    ctx.fillStyle = '#333333';
+
+    ctx.textAlign = align;
+
+    ctx.textBaseline = 'middle';
+
+    ctx.fillText(text, x, y);
+  }
+
+  private drawCenteredText(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    width: number,
+    height: number,
+  ): void {
+    this.drawText(ctx, text, width / 2, height / 2, 16, false, 'center');
+  }
+
+  /*
+   * ============================================================
+   * فارسی کردن اعداد
+   * ============================================================
+   */
+
+  private toPersianNumber(value: number): string {
+    return String(value).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+  }
+
+  /*
+   * کوتاه کردن متن
+   */
+
+  private truncateText(text: string, maxLength: number): string {
+    text = (text || '').replace(/\s+/g, ' ').trim();
+
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    return text.substring(0, maxLength) + '...';
+  }
+
+  /*
+   * تغییر اندازه صفحه
+   */
+
+  onResize(): void {
+    if (!this.data) {
+      return;
+    }
+
+    this.drawUsersChart();
+
+    this.drawQuestionsChart();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+
+    this.destroy$.complete();
+  }
 }
